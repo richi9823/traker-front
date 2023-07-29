@@ -26,7 +26,7 @@ import Icons from '../../pages/icons'
 import Typography from '../../pages/typography'
 import Tables from '../../pages/tables'
 import Notifications from '../../pages/notifications'
-import Posts from '../../pages/posts'
+import Vehicles from '../../pages/vehicles/Vehicles'
 import Profile from '../../pages/profile'
 import Privacy from '../../pages/privacy'
 
@@ -58,7 +58,7 @@ class Layout extends React.Component {
               <Route path="/app/main" exact component={Dashboard} />
               <Route path="/app/typography" exact component={Typography} />
               <Route path="/app/tables" exact component={Tables} />
-              <Route path="/app/posts" component={Posts} />
+              <Route path="/app/vehicles" component={Vehicles} />
               <Route path="/app/privacy" exact component={Privacy} />
               <Route path="/app/profile" exact component={Profile} />
               <Route path="/app/notifications" exact component={Notifications} /> 

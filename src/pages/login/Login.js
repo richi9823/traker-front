@@ -13,10 +13,10 @@ import {
 } from 'reactstrap';
 import s from './Login.module.scss';
 import Widget from '../../components/Widget';
-import Footer from "../../components/Footer";
-import { loginUser, session } from '../../actions/user';
+import { getSession, loginUser, signup, signupFailurePassword } from '../../actions/user';
 import jwt from 'jsonwebtoken';
 import config from '../../config'
+import { TrakerApi } from '../../constants/apiConf';
 
 class Login extends React.Component {
   static propTypes = {
@@ -25,6 +25,7 @@ class Login extends React.Component {
     isFetching: PropTypes.bool,
     location: PropTypes.any, // eslint-disable-line
     errorMessage: PropTypes.string,
+    message: PropTypes.string
   };
 
   static defaultProps = {
@@ -32,6 +33,7 @@ class Login extends React.Component {
     isFetching: false,
     location: {},
     errorMessage: null,
+    message: null,
   };
 
   static isAuthenticated(token) {
@@ -39,8 +41,8 @@ class Login extends React.Component {
     if (!config.isBackend && token) return true;
     if (!token) return;
     const date = new Date().getTime() / 1000;
-    console.log(token)
-    const data = jwt.decode(token);
+    const data = jwt.decode(token.replace("Bearer ", ""));
+    TrakerApi.ApiClient.instance.authentications['Bearer Authentication'].accessToken = token;
     return date < data.exp;
 }
 
@@ -48,36 +50,92 @@ class Login extends React.Component {
     super(props);
 
     this.state = {
-      login: 'user',
-      password: 'password',
+      login_nickname: 'richi2398',
+      login_password: '1998Pamos',
+      firstname:"",
+      lastname:"",
+      nickname:"",
+      email:"",
+      password:"",
+      r_password:"",
+      loginForm: true,
     };
   }
 
   changeLogin = (event) => {
-    this.setState({login: event.target.value});
+    this.setState({login_nickname: event.target.value});
+  }
+
+  changeLoginPassword = (event) => {
+    this.setState({login_password: event.target.value});
+  }
+
+  changeFirstname = (event) => {
+    this.setState({firstname: event.target.value});
+  }
+
+  changeLastname = (event) => {
+    this.setState({lastname: event.target.value});
+  }
+
+  changeNickname = (event) => {
+    this.setState({nickname: event.target.value});
   }
 
   changePassword = (event) => {
     this.setState({password: event.target.value});
   }
 
+  changeRPassword = (event) => {
+    this.setState({r_password: event.target.value});
+  }
+
+  changeEmail = (event) => {
+    this.setState({email: event.target.value});
+  }
+
+  changeLoginForm = () => {
+    this.setState({loginForm: !this.state.loginForm});
+  }
+
+
   doLogin = (e) => {
     this.props.dispatch(
       loginUser({
-        login: this.state.login,
-        password: this.state.password,
+        login: this.state.login_nickname,
+        password: this.state.login_password,
       }),
     );
     e.preventDefault();
   }
 
+  doSignup = (e) => {
+    const { firstname, lastname, nickname, password, email } = this.state;
+    if(this.state.password !== this.state.r_password){
+      this.props.dispatch(signupFailurePassword("La contraseña no coincide"))
+    }else{
+      this.props.dispatch(
+        signup({
+          firstname,
+          lastname,
+          nickname,
+          password,
+          email
+        })
+      ).then(() => {
+        this.setState({loginForm: !this.state.loginForm});
+      })
+    }
+    e.preventDefault();
+  }
+
   render() {
+    const {loginForm} = this.state;
     const {from} = this.props.location.state || {
       from: {pathname: '/app'},
     };
 
     if (this.props.isAuthenticated) {
-      // cant access login page while logged in
       return <Redirect to={from} />;
     }
 
@@ -87,6 +145,13 @@ class Login extends React.Component {
             <Col xs={{size: 10, offset: 1}} sm={{size: 6, offset: 3}} lg={{size:4, offset: 4}}>
               <p className="text-center">React Dashboard</p>
               <Widget className={s.widget}>
+              {this.props.message && (
+                    <Alert size="sm" color="success">
+                      {this.props.message}
+                    </Alert>
+                  )}
+              {loginForm ? 
+                <>
                 <h4 className="mt-0">Login to your Web App</h4>
                 <p className="fs-sm text-muted">
                   User your username and password to sign in<br />
@@ -101,8 +166,87 @@ class Login extends React.Component {
                   <FormGroup className="form-group">
                     <Input
                       className="no-border"
-                      value={this.state.login}
+                      value={this.state.login_nickname}
                       onChange={this.changeLogin}
+                      type="text"
+                      required
+                      name="username"
+                      placeholder="Username"
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Input
+                      className="no-border"
+                      value={this.state.login_password}
+                      onChange={this.changeLoginPassword}
+                      type="password"
+                      required
+                      name="password"
+                      placeholder="Password"
+                    />
+                  </FormGroup>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div>
+                      <Button color="default" size="sm" onClick={() => this.changeLoginForm()}>
+                        Crear cuenta
+                      </Button>
+                      <Button color="success" size="sm" type="submit">
+                        {this.props.isFetching ? 'Loading...' : 'Login'}
+                      </Button>
+                    </div>
+                  </div>
+                </Form>
+                </>
+                :
+                <>
+                <h4 className="mt-0">Signup to your Web App</h4>
+                <p className="fs-sm text-muted">
+                  Rellena el formulario<br />
+                </p>
+                <Form className="mt" onSubmit={this.doSignup}>
+                  {this.props.errorMessage && (
+                    <Alert size="sm" color="danger">
+                      {this.props.errorMessage}
+                    </Alert>
+                  )}
+                  <FormGroup className="form-group">
+                    <Input
+                      className="no-border"
+                      value={this.state.firstname}
+                      onChange={this.changeFirstname}
+                      type="text"
+                      required
+                      name="firstname"
+                      placeholder="Nombre"
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Input
+                      className="no-border"
+                      value={this.state.lastname}
+                      onChange={this.changeLastname}
+                      type="text"
+                      required
+                      name="lastname"
+                      placeholder="Apellido"
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Input
+                      className="no-border"
+                      value={this.state.email}
+                      onChange={this.changeEmail}
+                      type="text"
+                      required
+                      name="email"
+                      placeholder="Email"
+                    />
+                  </FormGroup>
+                  <FormGroup className="form-group">
+                    <Input
+                      className="no-border"
+                      value={this.state.nickname}
+                      onChange={this.changeNickname}
                       type="text"
                       required
                       name="username"
@@ -120,22 +264,32 @@ class Login extends React.Component {
                       placeholder="Password"
                     />
                   </FormGroup>
+                  <FormGroup>
+                    <Input
+                      className="no-border"
+                      value={this.state.r_password}
+                      onChange={this.changeRPassword}
+                      type="password"
+                      required
+                      name="password"
+                      placeholder="Repeat password"
+                    />
+                  </FormGroup>
                   <div className="d-flex justify-content-between align-items-center">
-                    <a href="#" className="fs-sm">Trouble with account?</a> {/* eslint-disable-line */}
                     <div>
-                      <Button color="default" size="sm">
-                        Create an account
+                    <Button color="success" size="sm" type="submit">
+                        {this.props.isFetching ? 'Loading...' : 'Crear cuenta'}
                       </Button>
-                      <Button color="success" size="sm" type="submit">
-                        {this.props.isFetching ? 'Loading...' : 'Login'}
+                      <Button color="default" size="sm" onClick={() => this.changeLoginForm()}>
+                        Ir al Login
                       </Button>
                     </div>
                   </div>
                 </Form>
+                </>}
               </Widget>
             </Col>
           </Row>
-          <Footer className="text-center" />
           </div>
         );
     }
@@ -146,6 +300,7 @@ function mapStateToProps(state) {
         isFetching: state.auth.isFetching,
         isAuthenticated: state.auth.isAuthenticated,
         errorMessage: state.auth.errorMessage,
+        message: state.auth.message,
     };
 }
 

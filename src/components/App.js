@@ -11,7 +11,7 @@ import LayoutComponent from '../components/Layout';
 //import DocumentationLayoutComponent from '../documentation/DocumentationLayout';
 import Login from '../pages/login';
 import Register from '../pages/register';
-import { logoutUser } from '../actions/user';
+import { getSession, logoutUser } from '../actions/user';
 
 const PrivateRoute = ({dispatch, component, ...rest }) => {
     if (!Login.isAuthenticated(localStorage.getItem('id_token'))) {
@@ -27,7 +27,18 @@ const PrivateRoute = ({dispatch, component, ...rest }) => {
 const CloseButton = ({closeToast}) => <i onClick={closeToast} className="la la-close notifications-close"/>
 
 class App extends React.PureComponent {
+
+    auth = () => {
+        if (!Login.isAuthenticated(localStorage.getItem('id_token'))) {
+            this.props.dispatch(logoutUser());
+            return (<Redirect to="/login"/>)
+        }else if(!this.props.user){
+            this.props.dispatch(getSession())
+        }
+    }
+    
   render() {
+    
     return (
         <div>
             <ToastContainer
@@ -36,6 +47,7 @@ class App extends React.PureComponent {
                 closeButton={<CloseButton/>}
             />
             <HashRouter>
+                {this.auth()}
                 <Switch>
                     <Route path="/" exact render={() => <Redirect to="/app/main"/>}/>
                     <Route path="/app" exact render={() => <Redirect to="/app/main"/>}/>
@@ -56,6 +68,7 @@ class App extends React.PureComponent {
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
+  user: state.auth.user,
 });
 
 export default connect(mapStateToProps)(App);

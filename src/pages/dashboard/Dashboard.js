@@ -24,8 +24,9 @@ import { mock } from './mock'
 
 import Widget from '../../components/Widget';
 
-import { fetchPosts } from '../../actions/posts';
+import { fetchVehicles } from '../../actions/vehicle';
 import s from './Dashboard.module.scss';
+import moment from 'moment/moment';
 
 class Dashboard extends Component {
   /* eslint-disable */
@@ -46,9 +47,8 @@ class Dashboard extends Component {
   };
 
   componentDidMount() {
-    if(process.env.NODE_ENV === "development") {
-      this.props.dispatch(fetchPosts());      
-    }
+      this.props.dispatch(fetchVehicles());
+
   }
 
   formatDate = (str) => {
@@ -179,53 +179,45 @@ class Dashboard extends Component {
             <Widget
               title={
                 <div>
-                  <div className="pull-right mt-n-xs">
-                    <Link to="/app/main" className="td-underline fs-sm">Options</Link>
-                  </div>
                   <h5 className="mt-0 mb-0">
-                    Recent posts{' '}
-                    <Badge color="success" className="ml-xs">
-                      5
-                    </Badge>
+                    Vehiculos
                   </h5>
                   <p className="fs-sm mb-0 text-muted">
-                    posts, that have been published recently
+                    vehiculos con actualizaciones recientes
                   </p>
                 </div>
               }
             >
               <table className="table table-sm table-no-border mb-0">
                 <tbody>
-                {this.props.posts &&
-                this.props.posts.map(post => (
-                  <tr key={post.id}>
-                    <td>{this.formatDate(new Date(post.updatedAt).toLocaleString())}</td>
+                {this.props.vehicles && this.props.vehicles.length < 5 &&
+                this.props.vehicles.map(v => (
+                  <tr key={v.id}>
+                    <td>{moment(v.modified_date).format('DD/MM/YYYY HH:mm')}</td>
                     <td>
-                      <Link to="/app/posts">{post.title}</Link>
+                      <Link to="/app/vehicles">{v.model + " " + v.license}</Link>
                     </td>
                   </tr>
                 ))}
-                {this.props.posts &&
-                !this.props.posts.length && (
-                  mock.map(post => (
-                    <tr key={post.id}>
-                      <td>{post.updatedAt}</td>
-                      <td>
-                        <Link to="/app/posts">{post.title}</Link>
-                      </td>
-                    </tr>
-                  ))
-                )}
+                {this.props.vehicles && this.props.vehicles.length > 5 &&
+                this.props.vehicles.splice(0,5).map(v => (
+                  <tr key={v.id}>
+                    <td>{moment(v.modified_date).format('DD/MM/YYYY HH:mm')}</td>
+                    <td>
+                      <Link to="/app/vehicles">{v.model + " " + v.license}</Link>
+                    </td>
+                  </tr>
+                ))}
                 {this.props.isFetching && (
                   <tr>
-                    <td colSpan="100">Loading...</td>
+                    <td colSpan="100">Cargando...</td>
                   </tr>
                 )}
                 </tbody>
               </table>
               <div className="d-flex justify-content-end">
-                <Link to="/app/posts" className="btn btn-default">
-                  View all Posts <Badge className="ml-xs" color="danger">13</Badge>
+                <Link to="/app/vehicles" className="btn btn-default">
+                 Ver todos <Badge className="ml-xs" color="danger">{this.props.vehicles ? this.props.vehicles.length: 0}</Badge>
                 </Link>
               </div>
             </Widget>
@@ -313,8 +305,8 @@ class Dashboard extends Component {
 
 function mapStateToProps(state) {
   return {
-    isFetching: state.posts.isFetching,
-    posts: state.posts.posts,
+    isFetching: state.vehicle.isFetching,
+    vehicles: state.vehicle.vehicles,
   };
 }
 

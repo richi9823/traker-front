@@ -15,9 +15,9 @@ import {
 } from 'reactstrap';
 import { connect } from 'react-redux';
 
-import Widget from '../../../components/Widget';
+import Widget from '../../../components/Widget/Widget';
 
-import { createPost } from '../../../actions/posts';
+import { createVehicle } from '../../../actions/vehicle';
 import s from './PostNew.module.scss';
 
 class PostNew extends React.Component {
@@ -33,39 +33,46 @@ class PostNew extends React.Component {
   };
 
   static meta = {
-    title: 'Create new post',
-    description: 'About description',
+    title: 'Registrar nuevo vehiculo',
+    description: 'Rellena los datos para registrar el nuevo vehiculo',
   };
 
   constructor(props) {
     super(props);
 
     this.state = {
-      title: '',
-      content: '',
+      model: '',
+      license: '',
+      device_register_id: '',
     };
   }
 
-  changeTitle = (event) => {
-    this.setState({title: event.target.value});
+  changeModel = (event) => {
+    this.setState({model: event.target.value});
   }
 
-  changeContent = (event) => {
-    this.setState({content: event.target.value});
+  changeLicense = (event) => {
+    this.setState({license: event.target.value});
   }
 
-  doCreatePost = (e) => {
+  changeDeviceRegisterId = (event) => {
+    this.setState({device_register_id: event.target.value});
+  }
+
+  doCreateVehicle = (e) => {
     this.props
       .dispatch(
-        createPost({
-          title: this.state.title,
-          content: this.state.content,
+        createVehicle({
+          model: this.state.model,
+          license: this.state.license,
+          device_register_id: this.state.device_register_id
         }),
       )
       .then(() =>
         this.setState({
-          title: '',
-          content: '',
+          model: '',
+          license: '',
+          device_register_id:''
         }),
       );
     e.preventDefault();
@@ -76,51 +83,62 @@ class PostNew extends React.Component {
       <div className={s.root}>
          <Breadcrumb>
           <BreadcrumbItem>YOU ARE HERE</BreadcrumbItem>
-          <BreadcrumbItem active>New Post</BreadcrumbItem>
+          <BreadcrumbItem>Vehiculos</BreadcrumbItem>
+          <BreadcrumbItem active>Nuevo vehiculo</BreadcrumbItem>
         </Breadcrumb>
-        <h1>Create new post</h1>
         <Row>
           <Col sm={6}>
             <Widget
               title={
                 <span>
-                  Add Post <span className="fw-semi-bold">Form</span>
+                  <span className="fw-semi-bold">Formulario</span>
                 </span>
               }
             >
-              <Form onSubmit={this.doCreatePost}>
+              <Form onSubmit={this.doCreateVehicle}>
                 {this.props.message && (
                   <Alert className="alert-sm" bsstyle="info">
                     {this.props.message}
                   </Alert>
                 )}
                 <FormGroup>
-                  <Label for="input-title">Title</Label>
+                  <Label for="input-title">Modelo</Label>
                   <Input
                     id="input-title"
                     type="text"
-                    placeholder="Title"
-                    value={this.state.title}
+                    placeholder="Modelo"
+                    value={this.state.model}
                     required
-                    onChange={this.changeTitle}
+                    onChange={this.changeModel}
                   />
                 </FormGroup>
                 <FormGroup>
-                  <Label for="input-content">Content</Label>
-                  <textarea
+                  <Label for="input-content">Matricula</Label>
+                  <Input
                     id="input-content"
-                    className="form-control"
-                    placeholder="Post Content"
-                    value={this.state.content}
+                    type="text"
+                    placeholder="Matricula"
+                    value={this.state.license}
                     required
-                    onChange={this.changeContent}
+                    onChange={this.changeLicense}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Label for="input-content">Dispositivo ID</Label>
+                  <Input
+                    id="input-content"
+                    type="text"
+                    placeholder="ID"
+                    value={this.state.device_register_id}
+                    required
+                    onChange={this.changeDeviceRegisterId}
                   />
                 </FormGroup>
                 <div className="d-flex justify-content-end">
                   <ButtonGroup>
                     <Button color="default">Cancel</Button>
                     <Button color="danger" type="submit">
-                      {this.props.isFetching ? 'Creating...' : 'Create'}
+                      {this.props.isFetching ? 'Registrando...' : 'Registrar'}
                     </Button>
                   </ButtonGroup>
                 </div>
@@ -135,8 +153,8 @@ class PostNew extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    isFetching: state.posts.isFetching,
-    message: state.posts.message,
+    isFetching: state.vehicle.isFetching,
+    message: state.vehicle.message,
   };
 }
 

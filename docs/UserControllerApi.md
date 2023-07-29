@@ -4,9 +4,9 @@ All URIs are relative to *http://localhost:8080*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**login**](UserControllerApi.md#login) | **POST** /api/user/login | 
-[**session**](UserControllerApi.md#session) | **GET** /api/user/session | 
-[**signup**](UserControllerApi.md#signup) | **POST** /api/user | 
+[**login**](UserControllerApi.md#login) | **POST** /auth/user/login | 
+[**session**](UserControllerApi.md#session) | **GET** /auth/user/session | 
+[**signup**](UserControllerApi.md#signup) | **POST** /auth/user | 
 
 
 

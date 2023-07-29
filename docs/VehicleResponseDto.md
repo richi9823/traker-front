@@ -10,5 +10,7 @@ Name | Type | Description | Notes
 **gps** | [**GPSResponseDto**](GPSResponseDto.md) |  | [optional] 
 **totalDistance** | **Number** |  | [optional] 
 **actualDistance** | **Number** |  | [optional] 
+**createdDate** | **Date** |  | [optional] 
+**modifiedDate** | **Date** |  | [optional] 
 
 

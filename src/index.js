@@ -5,7 +5,7 @@ import { Provider } from 'react-redux'
 import ReduxThunk from 'redux-thunk'
 import * as serviceWorker from './serviceWorker';
 import axios from 'axios';
-
+import {composeWithDevTools} from 'redux-devtools-extension'
 import App from './components/App';
 import config from './config';
 import reducers from './reducers';
@@ -19,8 +19,9 @@ if (token) {
 
 const store = createStore(
   reducers,
+  composeWithDevTools(
   applyMiddleware(ReduxThunk)
-);
+));
 
 ReactDOM.render(
     <Provider store={store}>
