@@ -2,6 +2,7 @@ import { TrakerApi } from "../constants/apiConf";
 import { logoutUser } from "./user";
 
 export const REQUEST_VEHICLE_INIT = 'REQUEST_VEHICLE_INIT';
+export const GET_VEHICLE = 'GET_VEHICLE';
 export const CREATE_VEHICLE_SUCCESS = 'CREATE_VEHICLE_SUCCESS';
 export const DELETE_VEHICLE_SUCCESS = 'DELETE_VEHICLE_SUCCESS';
 export const EDIT_VEHICLE_SUCCESS = 'EDIT_VEHICLE_SUCCESS';
@@ -17,28 +18,34 @@ function requestVehicleInit() {
   };
 }
 
-function requestCreateVehicle(vehicle) {
+function requestCreateVehicle() {
   return {
     type: CREATE_VEHICLE_SUCCESS,
     isFetching: false,
-    vehicle,
     message:"Vehiculo registrado"
   };
 }
 
-function requestDeleteVehicle(id) {
+function requestGetVehicle(data) {
   return {
-    type: DELETE_VEHICLE_SUCCESS,
+    type: CREATE_VEHICLE_SUCCESS,
     isFetching: false,
-    id,
+    selected:data
   };
 }
 
-function requestEditVehicle(vehicle) {
+function requestDeleteVehicle() {
+  return {
+    type: DELETE_VEHICLE_SUCCESS,
+    isFetching: false,
+  };
+}
+
+function requestEditVehicle() {
   return {
     type: EDIT_VEHICLE_SUCCESS,
     isFetching: false,
-    vehicle,
+    message:"Edicion completa"
   };
 }
 
@@ -50,11 +57,32 @@ function requestFecthVehicles(vehicles) {
   };
 }
 
-function requestVehicleFailure(message) {
+function requestVehicleFailure() {
   return {
     type: REQUEST_VEHICLE_FAILURE,
     isFetching: false,
-    message,
+  };
+}
+
+export function getVehicle(id) {
+
+  return dispatch => {
+
+    dispatch(requestVehicleInit());
+    return VehicleApi.getVehicle(id)
+      .then((response) => {
+        // Dispatch the success action
+        dispatch(requestGetVehicle(response));
+        return Promise.resolve(response);
+      })
+      .catch(err => {
+        if(err.status === 401){
+          dispatch(logoutUser())
+        }else{
+          dispatch(requestVehicleFailure(err.body.message))
+          console.error('Error: ', err)
+        }
+      });
   };
 }
 
@@ -66,7 +94,8 @@ export function createVehicle(vehicle) {
     return VehicleApi.registerVehicle(vehicle)
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestCreateVehicle(response));
+        dispatch(requestCreateVehicle());
+        dispatch(fetchVehicles(1,5));
         return Promise.resolve(response);
       })
       .catch(err => {
@@ -89,7 +118,7 @@ export function editVehicle(id, vehicle) {
     return VehicleApi.editVehicle(id, vehicle)
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestEditVehicle(response));
+        dispatch(requestEditVehicle());
         return Promise.resolve(response);
       })
       .catch(err => {
@@ -104,18 +133,22 @@ export function editVehicle(id, vehicle) {
   };
 }
 
-export function fetchVehicles() {
+export function fetchVehicles(page, size) {
 
   return dispatch => {
 
     dispatch(requestVehicleInit());
-    return VehicleApi.getUserVehicles()
+    return VehicleApi.getUserVehicles({
+      page:page-1,
+      size 
+    })
       .then((response) => {
         // Dispatch the success action
         dispatch(requestFecthVehicles(response));
         return Promise.resolve(response);
       })
       .catch(err => {
+        console.log(err)
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
@@ -136,7 +169,7 @@ export function removeVehicle(id) {
     return VehicleApi.removeVehicle(id)
       .then(() => {
         // Dispatch the success action
-        dispatch(requestDeleteVehicle(id));
+        dispatch(requestDeleteVehicle());
         return Promise.resolve();
       })
       .catch(err => {

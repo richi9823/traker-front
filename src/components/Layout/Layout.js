@@ -25,10 +25,12 @@ import NotFound from '../../pages/notFound'
 import Icons from '../../pages/icons'
 import Typography from '../../pages/typography'
 import Tables from '../../pages/tables'
-import Notifications from '../../pages/notifications'
+import Notifications_ from '../../pages/notifications_'
 import Vehicles from '../../pages/vehicles/Vehicles'
 import Profile from '../../pages/profile'
 import Privacy from '../../pages/privacy'
+import Alerts from '../../pages/alerts/Alerts';
+import Notifications from '../../pages/notifications/Notifications';
 
 class Layout extends React.Component {
   constructor(props) {
@@ -56,12 +58,15 @@ class Layout extends React.Component {
           <main className={s.content}>
             <Switch>
               <Route path="/app/main" exact component={Dashboard} />
+              <Route path="/app/vehicles" component={Vehicles} />
+              <Route path="/app/alerts" component={Alerts} />
+              <Route path="/app/notifications" component={Notifications} />
+
               <Route path="/app/typography" exact component={Typography} />
               <Route path="/app/tables" exact component={Tables} />
-              <Route path="/app/vehicles" component={Vehicles} />
               <Route path="/app/privacy" exact component={Privacy} />
               <Route path="/app/profile" exact component={Profile} />
-              <Route path="/app/notifications" exact component={Notifications} /> 
+              <Route path="/app/notifications" exact component={Notifications_} /> 
               <Route path="/app/components/buttons" exact component={Buttons} />
               <Route path="/app/components/charts" exact component={Charts} />
               <Route path="/app/components/icons" exact component={Icons} />

@@ -107,7 +107,7 @@ Name | Type | Description  | Notes
 
 ## getVehicleAlerts
 
-> [AlertResponseDto] getVehicleAlerts(vehicleId)
+> ListResponseAlertResponseDto getVehicleAlerts(vehicleId, opts)
 
 
 
@@ -122,7 +122,12 @@ Bearer Authentication.accessToken = "YOUR ACCESS TOKEN"
 
 let apiInstance = new TrakerApi.AlertControllerApi();
 let vehicleId = 56; // Number | 
-apiInstance.getVehicleAlerts(vehicleId).then((data) => {
+let opts = {
+  'page': 0, // Number | 
+  'size': 5, // Number | 
+  'sort': "'modifiedDate'" // String | 
+};
+apiInstance.getVehicleAlerts(vehicleId, opts).then((data) => {
   console.log('API called successfully. Returned data: ' + data);
 }, (error) => {
   console.error(error);
@@ -136,10 +141,13 @@ apiInstance.getVehicleAlerts(vehicleId).then((data) => {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **vehicleId** | **Number**|  | 
+ **page** | **Number**|  | [optional] [default to 0]
+ **size** | **Number**|  | [optional] [default to 5]
+ **sort** | **String**|  | [optional] [default to &#39;modifiedDate&#39;]
 
 ### Return type
 
-[**[AlertResponseDto]**](AlertResponseDto.md)
+[**ListResponseAlertResponseDto**](ListResponseAlertResponseDto.md)
 
 ### Authorization
 

@@ -14,7 +14,7 @@ Method | HTTP request | Description
 
 ## getAlertNotifications
 
-> [NotificationResponseDto] getAlertNotifications(alertId)
+> ListResponseNotificationResponseDto getAlertNotifications(alertId, opts)
 
 
 
@@ -29,7 +29,12 @@ Bearer Authentication.accessToken = "YOUR ACCESS TOKEN"
 
 let apiInstance = new TrakerApi.NotificationControllerApi();
 let alertId = 56; // Number | 
-apiInstance.getAlertNotifications(alertId).then((data) => {
+let opts = {
+  'page': 0, // Number | 
+  'size': 5, // Number | 
+  'sort': "'modifiedDate'" // String | 
+};
+apiInstance.getAlertNotifications(alertId, opts).then((data) => {
   console.log('API called successfully. Returned data: ' + data);
 }, (error) => {
   console.error(error);
@@ -43,10 +48,13 @@ apiInstance.getAlertNotifications(alertId).then((data) => {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **alertId** | **Number**|  | 
+ **page** | **Number**|  | [optional] [default to 0]
+ **size** | **Number**|  | [optional] [default to 5]
+ **sort** | **String**|  | [optional] [default to &#39;modifiedDate&#39;]
 
 ### Return type
 
-[**[NotificationResponseDto]**](NotificationResponseDto.md)
+[**ListResponseNotificationResponseDto**](ListResponseNotificationResponseDto.md)
 
 ### Authorization
 
@@ -60,7 +68,7 @@ Name | Type | Description  | Notes
 
 ## getNotifications
 
-> [NotificationResponseDto] getNotifications()
+> ListResponseNotificationResponseDto getNotifications(opts)
 
 
 
@@ -74,7 +82,12 @@ let Bearer Authentication = defaultClient.authentications['Bearer Authentication
 Bearer Authentication.accessToken = "YOUR ACCESS TOKEN"
 
 let apiInstance = new TrakerApi.NotificationControllerApi();
-apiInstance.getNotifications().then((data) => {
+let opts = {
+  'page': 0, // Number | 
+  'size': 5, // Number | 
+  'sort': "'modifiedDate'" // String | 
+};
+apiInstance.getNotifications(opts).then((data) => {
   console.log('API called successfully. Returned data: ' + data);
 }, (error) => {
   console.error(error);
@@ -84,11 +97,16 @@ apiInstance.getNotifications().then((data) => {
 
 ### Parameters
 
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **page** | **Number**|  | [optional] [default to 0]
+ **size** | **Number**|  | [optional] [default to 5]
+ **sort** | **String**|  | [optional] [default to &#39;modifiedDate&#39;]
 
 ### Return type
 
-[**[NotificationResponseDto]**](NotificationResponseDto.md)
+[**ListResponseNotificationResponseDto**](ListResponseNotificationResponseDto.md)
 
 ### Authorization
 
@@ -102,7 +120,7 @@ This endpoint does not need any parameter.
 
 ## getPendingNotifications
 
-> [NotificationResponseDto] getPendingNotifications()
+> ListResponseNotificationResponseDto getPendingNotifications(opts)
 
 
 
@@ -116,7 +134,12 @@ let Bearer Authentication = defaultClient.authentications['Bearer Authentication
 Bearer Authentication.accessToken = "YOUR ACCESS TOKEN"
 
 let apiInstance = new TrakerApi.NotificationControllerApi();
-apiInstance.getPendingNotifications().then((data) => {
+let opts = {
+  'page': 0, // Number | 
+  'size': 5, // Number | 
+  'sort': "'modifiedDate'" // String | 
+};
+apiInstance.getPendingNotifications(opts).then((data) => {
   console.log('API called successfully. Returned data: ' + data);
 }, (error) => {
   console.error(error);
@@ -126,11 +149,16 @@ apiInstance.getPendingNotifications().then((data) => {
 
 ### Parameters
 
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **page** | **Number**|  | [optional] [default to 0]
+ **size** | **Number**|  | [optional] [default to 5]
+ **sort** | **String**|  | [optional] [default to &#39;modifiedDate&#39;]
 
 ### Return type
 
-[**[NotificationResponseDto]**](NotificationResponseDto.md)
+[**ListResponseNotificationResponseDto**](ListResponseNotificationResponseDto.md)
 
 ### Authorization
 
@@ -144,7 +172,7 @@ This endpoint does not need any parameter.
 
 ## getVehicleNotifications
 
-> [NotificationResponseDto] getVehicleNotifications(vehicleId)
+> ListResponseNotificationResponseDto getVehicleNotifications(vehicleId, opts)
 
 
 
@@ -159,7 +187,12 @@ Bearer Authentication.accessToken = "YOUR ACCESS TOKEN"
 
 let apiInstance = new TrakerApi.NotificationControllerApi();
 let vehicleId = 56; // Number | 
-apiInstance.getVehicleNotifications(vehicleId).then((data) => {
+let opts = {
+  'page': 0, // Number | 
+  'size': 5, // Number | 
+  'sort': "'modifiedDate'" // String | 
+};
+apiInstance.getVehicleNotifications(vehicleId, opts).then((data) => {
   console.log('API called successfully. Returned data: ' + data);
 }, (error) => {
   console.error(error);
@@ -173,10 +206,13 @@ apiInstance.getVehicleNotifications(vehicleId).then((data) => {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **vehicleId** | **Number**|  | 
+ **page** | **Number**|  | [optional] [default to 0]
+ **size** | **Number**|  | [optional] [default to 5]
+ **sort** | **String**|  | [optional] [default to &#39;modifiedDate&#39;]
 
 ### Return type
 
-[**[NotificationResponseDto]**](NotificationResponseDto.md)
+[**ListResponseNotificationResponseDto**](ListResponseNotificationResponseDto.md)
 
 ### Authorization
 

@@ -12,6 +12,8 @@ Name | Type | Description | Notes
 **distance** | [**AlertDistanceResponseDto**](AlertDistanceResponseDto.md) |  | [optional] 
 **speed** | [**AlertSpeedResponseDto**](AlertSpeedResponseDto.md) |  | [optional] 
 **vehicleId** | **Number** |  | [optional] 
+**createdDate** | **Date** |  | [optional] 
+**modifiedDate** | **Date** |  | [optional] 
 
 
 

@@ -10,14 +10,12 @@ import {
   ButtonGroup,
   Alert,
   Label,
-  Breadcrumb,
-  BreadcrumbItem,
 } from 'reactstrap';
 import { connect } from 'react-redux';
 
-import Widget from '../../../components/Widget/Widget';
+import Widget from '../Widget/Widget';
 
-import { createVehicle } from '../../../actions/vehicle';
+import { createVehicle } from '../../actions/vehicle';
 import s from './PostNew.module.scss';
 
 class PostNew extends React.Component {
@@ -81,17 +79,12 @@ class PostNew extends React.Component {
   render() {
     return (
       <div className={s.root}>
-         <Breadcrumb>
-          <BreadcrumbItem>YOU ARE HERE</BreadcrumbItem>
-          <BreadcrumbItem>Vehiculos</BreadcrumbItem>
-          <BreadcrumbItem active>Nuevo vehiculo</BreadcrumbItem>
-        </Breadcrumb>
         <Row>
-          <Col sm={6}>
+          <Col sm={12}>
             <Widget
               title={
                 <span>
-                  <span className="fw-semi-bold">Formulario</span>
+                  <h5 class="mt-0 mb-0">Registro rápido</h5>
                 </span>
               }
             >
@@ -136,7 +129,6 @@ class PostNew extends React.Component {
                 </FormGroup>
                 <div className="d-flex justify-content-end">
                   <ButtonGroup>
-                    <Button color="default">Cancel</Button>
                     <Button color="danger" type="submit">
                       {this.props.isFetching ? 'Registrando...' : 'Registrar'}
                     </Button>

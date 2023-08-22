@@ -8,5 +8,7 @@ Name | Type | Description | Notes
 **traccarDeviceId** | **Number** |  | [optional] 
 **registerDeviceId** | **Number** |  | [optional] 
 **lastUpdated** | **Date** |  | [optional] 
+**totalDistance** | **Number** |  | [optional] 
+**actualDistance** | **Number** |  | [optional] 
 
 

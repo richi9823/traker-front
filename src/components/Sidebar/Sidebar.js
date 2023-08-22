@@ -16,24 +16,29 @@ const Sidebar = () => (
     </header>
     <ul className={s.nav}>
       <LinksGroup
-        header="Dashboard"
+        header="Home"
         headerLink="/app/main"
         glyph="dashboard"
       />
       <LinksGroup
-        header="Typography"
-        headerLink="/app/typography"
-        glyph="typography"
+        header="Vehiculos"
+        headerLink="/app/vehicles"
+        glyph="car"
       />
       <LinksGroup
-        header="Tables Basic"
-        headerLink="/app/tables"
-        glyph="tables"
+        header="Alertas"
+        headerLink="/app/alerts"
+        glyph="alert"
       />
       <LinksGroup
-        header="Notifications"
+        header="Notificaciones"
         headerLink="/app/notifications"
         glyph="notifications"
+      />
+      <LinksGroup
+        header="Perfil"
+        headerLink="/app/user"
+        glyph="user"
       />
       <LinksGroup
         header="Components"

@@ -12,7 +12,7 @@ import paginationFactory, {
 import BootstrapTable from 'react-bootstrap-table-next';
 import ToolkitProvider from 'react-bootstrap-table2-toolkit';
 import { isEqual } from 'lodash';
-import s from './VehicleList.module.scss';
+import s from './NotificationList.module.scss';
 import Widget from '../../../components/Widget/Widget';
 import { fetchVehicles, removeVehicle } from '../../../actions/vehicle';
 import { options } from '../../../constants/pagination';
@@ -55,7 +55,7 @@ const columns = ({ handleAction }) => [
   },
 ];
 
-class PostList extends React.Component {
+class NotificationList extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     vehicles: PropTypes.array, // eslint-disable-line
@@ -246,4 +246,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(PostList);
+export default connect(mapStateToProps)(NotificationList);
