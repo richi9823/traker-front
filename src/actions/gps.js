@@ -47,10 +47,11 @@ function requestGetAllGps() {
   };
 }
 
-function requestGpsFailure() {
+function requestGpsFailure(message) {
   return {
     type: REQUEST_GPS_FAILURE,
     isFetching: false,
+    errorMessage: message,
   };
 }
 
@@ -70,7 +71,7 @@ export function deleteGps(gpsId) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestGpsFailure(err.body.message))
+          dispatch(requestGpsFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });
@@ -92,7 +93,7 @@ export function getGps(gpsId) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestGpsFailure(err.body.message))
+          dispatch(requestGpsFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });
@@ -115,7 +116,7 @@ export function getAllGps(vehicleId) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestGpsFailure(err.body.message))
+          dispatch(requestGpsFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });
@@ -138,7 +139,7 @@ export function updateStatusGps(gpsId, status) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestGpsFailure(err.body.message))
+          dispatch(requestGpsFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });

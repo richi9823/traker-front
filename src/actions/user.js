@@ -40,10 +40,11 @@ function requestDeleteUser() {
 }
 
 
-function requestUserFailure() {
+function requestUserFailure(message) {
   return {
     type: REQUEST_USER_FAILURE,
     isFetching: false,
+    errorMessage: message,
   };
 }
 
@@ -63,7 +64,7 @@ export function getUser() {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestUserFailure(err.body.message))
+          dispatch(requestUserFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });
@@ -85,7 +86,7 @@ export function editUser(user) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestUserFailure(err.body.message))
+          dispatch(requestUserFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });
@@ -109,7 +110,7 @@ export function deleteUser() {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestUserFailure(err.body.message))
+          dispatch(requestUserFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });

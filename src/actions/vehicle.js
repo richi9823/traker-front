@@ -84,10 +84,11 @@ function requestDeleteImage() {
   };
 }
 
-function requestVehicleFailure() {
+function requestVehicleFailure(message) {
   return {
     type: REQUEST_VEHICLE_FAILURE,
     isFetching: false,
+    errorMessage: message
   };
 }
 
@@ -107,7 +108,7 @@ export function addGpsDevice(vehicleId, gps) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestVehicleFailure(err.body.message))
+          dispatch(requestVehicleFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });
@@ -129,7 +130,7 @@ export function deleteImage(vehicleId) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestVehicleFailure(err.body.message))
+          dispatch(requestVehicleFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });
@@ -152,7 +153,7 @@ export function editVehicle(id, vehicle) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestVehicleFailure(err.body.message))
+          dispatch(requestVehicleFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });
@@ -180,7 +181,7 @@ export function getAllVehicles(page, size, sort) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestVehicleFailure(err.body.message))
+          dispatch(requestVehicleFailure(err?.body?.message))
           console.error('Error: ', err)
         }
         
@@ -204,7 +205,7 @@ export function getVehicle(id) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestVehicleFailure(err.body.message))
+          dispatch(requestVehicleFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });
@@ -226,7 +227,7 @@ export function createVehicle(vehicle) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestVehicleFailure(err.body.message))
+          dispatch(requestVehicleFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });
@@ -250,7 +251,7 @@ export function removeVehicle(id) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestVehicleFailure(err.body.message))
+          dispatch(requestVehicleFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });

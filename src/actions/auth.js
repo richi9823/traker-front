@@ -135,7 +135,7 @@ export function signup(data) {
         return Promise.resolve();
       })
       .catch(err => {
-        dispatch(signupFailure(err.body.message))
+        dispatch(signupFailure(err?.body?.message))
         console.error(err)
         return Promise.reject();
       }

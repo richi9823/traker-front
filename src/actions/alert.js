@@ -55,10 +55,11 @@ function requestGetAllAlerts() {
   };
 }
 
-function requestAlertFailure() {
+function requestAlertFailure(message) {
   return {
     type: REQUEST_ALERTS_FAILURE,
     isFetching: false,
+    errorMessage: message,
   };
 }
 
@@ -77,7 +78,7 @@ export function getAlert(id) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestAlertFailure(err.body.message))
+          dispatch(requestAlertFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });
@@ -99,7 +100,7 @@ export function createAlert(alert) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestAlertFailure(err.body.message))
+          dispatch(requestAlertFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });
@@ -122,7 +123,7 @@ export function editAlert(id, alert) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestAlertFailure(err.body.message))
+          dispatch(requestAlertFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });
@@ -151,7 +152,7 @@ export function getAllAlerts(vehicleId, page, size, sort) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestAlertFailure(err.body.message))
+          dispatch(requestAlertFailure(err?.body?.message))
           console.error('Error: ', err)
         }
         
@@ -175,7 +176,7 @@ export function removeAlert(id) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestAlertFailure(err.body.message))
+          dispatch(requestAlertFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });

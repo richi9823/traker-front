@@ -40,10 +40,11 @@ function requestDeleteRoute() {
 }
 
 
-function requestRouteFailure() {
+function requestRouteFailure(message) {
   return {
     type: REQUEST_ROUTE_FAILURE,
     isFetching: false,
+    errorMessage: message,
   };
 }
 
@@ -69,7 +70,7 @@ export function getAllRoute(vehicleId, page, size, since, until) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestRouteFailure(err.body.message))
+          dispatch(requestRouteFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });
@@ -91,7 +92,7 @@ export function getRoute(routeId) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestRouteFailure(err.body.message))
+          dispatch(requestRouteFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });
@@ -113,7 +114,7 @@ export function deleteRoute(routeId) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestRouteFailure(err.body.message))
+          dispatch(requestRouteFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });

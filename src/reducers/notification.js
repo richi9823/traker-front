@@ -17,11 +17,12 @@ export default function notification(
       return Object.assign({}, state, {
         isFetching: action.isFetching,
         message: null,
+        errorMessage: null,
       });
     case REQUEST_NOTIFICATION_FAILURE:
       return Object.assign({}, state, {
         isFetching: action.isFetching,
-        message_error:action.message
+        errorMessage:action.errorMessage
       });
     case READ_NOTIFICATION:
     case GET_NOTIFICATION_SUCCESS:

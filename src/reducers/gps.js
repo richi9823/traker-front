@@ -18,11 +18,12 @@ export default function gps(
       return Object.assign({}, state, {
         isFetching: action.isFetching,
         message: null,
+        errorMessage: null,
       });
     case REQUEST_GPS_FAILURE:
       return Object.assign({}, state, {
         isFetching: action.isFetching,
-        message_error:action.message
+        errorMessage:action.errorMessage
       });
     case GET_GPS_SUCCESS:
     case GET_ALL_GPS_SUCCESS:

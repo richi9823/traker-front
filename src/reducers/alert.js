@@ -19,11 +19,12 @@ export default function alert(
       return Object.assign({}, state, {
         isFetching: action.isFetching,
         message: null,
+        errorMessage:null,
       });
     case REQUEST_ALERTS_FAILURE:
       return Object.assign({}, state, {
         isFetching: action.isFetching,
-        message_error:action.message
+        errorMessage:action.errorMessage,
       });
     case CREATE_ALERT_SUCCESS:
     case DELETE_ALERT_SUCCESS:

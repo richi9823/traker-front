@@ -22,10 +22,10 @@ function requestGetAsset() {
   };
 }
 
-function requestAssetFailure() {
+function requestAssetFailure(message) {
   return {
     type: REQUEST_ASSET_FAILURE,
-
+    errorMessage: message,
   };
 }
 
@@ -45,7 +45,7 @@ export function getAsset(assetId) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestAssetFailure(err.body.message))
+          dispatch(requestAssetFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });

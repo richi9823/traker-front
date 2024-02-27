@@ -40,10 +40,11 @@ function requestReadNotificaiton() {
 }
 
 
-function requestNotificationFailure() {
+function requestNotificationFailure(message) {
   return {
     type: REQUEST_NOTIFICATION_FAILURE,
     isFetching: false,
+    errorMessage: message,
   };
 }
 
@@ -63,7 +64,7 @@ export function getNotification(notificationId) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestNotificationFailure(err.body.message))
+          dispatch(requestNotificationFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });
@@ -93,7 +94,7 @@ export function getAllNotifications(vehicleId, alertId, readed, page, size, sort
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestNotificationFailure(err.body.message))
+          dispatch(requestNotificationFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });
@@ -115,7 +116,7 @@ export function readNotification(notificationId) {
         if(err.status === 401){
           dispatch(logoutUser())
         }else{
-          dispatch(requestNotificationFailure(err.body.message))
+          dispatch(requestNotificationFailure(err?.body?.message))
           console.error('Error: ', err)
         }
       });

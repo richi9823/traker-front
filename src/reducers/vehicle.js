@@ -22,11 +22,12 @@ export default function vehicle(
       return Object.assign({}, state, {
         isFetching: action.isFetching,
         message: null,
+        errorMessage: null,
       });
     case REQUEST_VEHICLE_FAILURE:
       return Object.assign({}, state, {
         isFetching: action.isFetching,
-        message_error:action.message
+        errorMessage:action.errorMessage
       });
     case CREATE_VEHICLE_SUCCESS:
     case DELETE_VEHICLE_SUCCESS:

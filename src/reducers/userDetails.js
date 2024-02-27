@@ -17,11 +17,12 @@ export default function userDetails(
       return Object.assign({}, state, {
         isFetching: action.isFetching,
         message: null,
+        errorMessage: null,
       });
     case REQUEST_USER_FAILURE:
       return Object.assign({}, state, {
         isFetching: action.isFetching,
-        message_error:action.message
+        errorMessage:action.errorMessage
       });
     case GET_USER_SUCCESS:
     case EDIT_USER_SUCCESS:
