@@ -18,7 +18,7 @@ import Widget from '../Widget/Widget';
 import { createVehicle } from '../../actions/vehicle';
 import s from './RegisterVehicle.module.scss';
 
-class PostNew extends React.Component {
+class RegisterVehicle extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     message: PropTypes.string,
@@ -150,4 +150,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(PostNew);
+export default connect(mapStateToProps)(RegisterVehicle);

@@ -14,7 +14,7 @@ import ToolkitProvider from 'react-bootstrap-table2-toolkit';
 import { isEqual } from 'lodash';
 import s from './AlertList.module.scss';
 import Widget from '../../../components/Widget/Widget';
-import { fetchVehicles, removeVehicle } from '../../../actions/vehicle';
+import { getAllAlerts, removeAlert } from '../../../actions/alert';
 import { options } from '../../../constants/pagination';
 import { columnFormatter } from './columnFormatter';
 import DeleteModal from '../../../components/Modals/DeleteModal';
@@ -86,7 +86,7 @@ class AlertList extends React.Component {
   }
 
   componentDidMount() {
-      this.props.dispatch(fetchVehicles(1,5)).then((response) => {
+      this.props.dispatch(getAllAlerts(null, 1, 5, null)).then((response) => {
         console.log(response)
         this.setState((prev) => (
           {
@@ -103,7 +103,7 @@ class AlertList extends React.Component {
       queryParams, paginationOptions
     } = this.state;
     if (!isEqual(prevQueryParams, queryParams)) {
-      this.props.dispatch(fetchVehicles(paginationOptions.page, paginationOptions.sizePerPage)).then((response) => {
+      this.props.dispatch(getAllAlerts(null, paginationOptions.page, paginationOptions.sizePerPage, null)).then((response) => {
         this.setState((prev) => (
           {
             paginationOptions:{
@@ -158,8 +158,8 @@ class AlertList extends React.Component {
 
   doRemove = () => {
     const { paginationOptions, deleteItem } = this.state;
-    this.props.dispatch(removeVehicle(deleteItem.id)).then(()=>{
-      this.props.dispatch(fetchVehicles(paginationOptions.page, paginationOptions.sizePerPage)).then((response) => {
+    this.props.dispatch(removeAlert(deleteItem.id)).then(()=>{
+      this.props.dispatch(getAllAlerts(null, paginationOptions.page, paginationOptions.sizePerPage, null)).then((response) => {
         this.setState((prev) => (
           {
             showDeleteModal:false,

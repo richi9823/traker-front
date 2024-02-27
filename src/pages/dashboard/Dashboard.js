@@ -19,7 +19,7 @@ import Widget from '../../components/Widget';
 import { getAllVehicles } from '../../actions/vehicle';
 import s from './Dashboard.module.scss';
 import moment from 'moment/moment';
-import RegisterVehicle from '../../components/RegisterVehicle';
+import RegisterVehicle from '../../components/RegisterVehicle/RegisterVehicle';
 
 class Dashboard extends Component {
   /* eslint-disable */
