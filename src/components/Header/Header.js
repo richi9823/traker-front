@@ -29,7 +29,7 @@ import { NavLink } from 'react-router-dom';
 import Icon from '../Icon';
 
 import photo from '../../images/photo.jpg';
-import { logoutUser } from '../../actions/user';
+import { logoutUser } from '../../actions/auth';
 import s from './Header.module.scss';
 
 class Header extends React.Component {

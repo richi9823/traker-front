@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import Widget from '../Widget/Widget';
 
 import { createVehicle } from '../../actions/vehicle';
-import s from './PostNew.module.scss';
+import s from './RegisterVehicle.module.scss';
 
 class PostNew extends React.Component {
   static propTypes = {

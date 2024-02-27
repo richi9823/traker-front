@@ -1,166 +1,117 @@
-import { TrakerApi } from '../constants/apiConf';
+import { TrakerApi } from "../constants/apiConf";
+import { logoutUser } from "./auth";
+
+export const REQUEST_USER_INIT = 'REQUEST_USER_INIT';
+export const REQUEST_USER_FAILURE = 'REQUEST_USER_FAILURE';
+
+export const DELETE_USER_SUCCESS = 'DELETE_USER_SUCCESS';
+export const EDIT_USER_SUCCESS = 'EDIT_USER_SUCCESS';
+export const GET_USER_SUCCESS = 'GET_USER_SUCCESS';
+
 
 const UserApi = new TrakerApi.UserControllerApi();
 
-export const LOGIN_REQUEST = 'LOGIN_REQUEST';
-export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
-export const LOGIN_FAILURE = 'LOGIN_FAILURE';
-export const LOGOUT_REQUEST = 'LOGOUT_REQUEST';
-export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
-export const LOGOUT_FAILURE = 'LOGOUT_FAILURE';
-export const SIGNUP_REQUEST = 'SIGNUP_REQUEST';
-export const SIGNUP_SUCCESS = 'SIGNUP_SUCCESS';
-export const SIGNUP_FAILURE = 'SIGNUP_FAILURE';
-export const SESSION='GET_SESSION';
-
-function recieveSession(user) {
+function requestUserInit() {
   return {
-    type: SESSION,
-    isFetching: false,
-    isAuthenticated: false,
-    user,
-  };
-}
-
-function requestLogin(creds) {
-  return {
-    type: LOGIN_REQUEST,
-    isFetching: true,
-    isAuthenticated: false,
-    creds,
-  };
-}
-
-export function receiveLogin(user) {
-  return {
-    type: LOGIN_SUCCESS,
-    isFetching: false,
-    isAuthenticated: true,
-    user,
-  };
-}
-
-function loginError(message) {
-  return {
-    type: LOGIN_FAILURE,
-    isFetching: false,
-    isAuthenticated: false,
-    message,
-  };
-}
-
-function requestSignup() {
-  return {
-    type: SIGNUP_REQUEST,
+    type: REQUEST_USER_INIT,
     isFetching: true,
   };
 }
 
-export function receiveSignup() {
+function requestGetUser() {
   return {
-    type: SIGNUP_SUCCESS,
+    type: GET_USER_SUCCESS,
     isFetching: false,
-    message: "Cuenta creada"
   };
 }
 
-function signupFailure(message) {
+function requestEditUser() {
   return {
-    type: SIGNUP_FAILURE,
-    message,
-  };
-}
-
-function requestLogout() {
-  return {
-    type: LOGOUT_REQUEST,
-    isFetching: true,
-    isAuthenticated: true,
-  };
-}
-
-export function receiveLogout() {
-  return {
-    type: LOGOUT_SUCCESS,
+    type: EDIT_USER_SUCCESS,
     isFetching: false,
-    isAuthenticated: false,
   };
 }
 
-// Logs the user out
-export function logoutUser() {
+function requestDeleteUser() {
+  return {
+    type: DELETE_USER_SUCCESS,
+    isFetching: false,
+  };
+}
+
+
+function requestUserFailure() {
+  return {
+    type: REQUEST_USER_FAILURE,
+    isFetching: false,
+  };
+}
+
+
+export function getUser() {
+
   return dispatch => {
-    dispatch(requestLogout());
-    localStorage.removeItem('id_token');
-    document.cookie = 'id_token=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    dispatch(receiveLogout());
-  };
-}
 
-export function loginUser(creds) {
-
-  
-  return dispatch => {
-    dispatch(requestLogin(creds));
-    let authCredentials = new TrakerApi.AuthCredentials();
-    authCredentials.nickname = creds.login;
-    authCredentials.password = creds.password;
-    return UserApi.login(authCredentials)
+    dispatch(requestUserInit());
+    return UserApi.getUserDetails()
       .then((response) => {
-        console.log(response)
-        localStorage.setItem('id_token', response.access_token);
-        dispatch(receiveLogin(response));
+        // Dispatch the success action
+        dispatch(requestGetUser());
         return Promise.resolve(response);
       })
       .catch(err => {
         if(err.status === 401){
-          dispatch(loginError("Unhauthorized"))
-          console.error('Error: ', err);
+          dispatch(logoutUser())
         }else{
-          console.error('Error: ', err)}
+          dispatch(requestUserFailure(err.body.message))
+          console.error('Error: ', err)
         }
-      );
-
+      });
   };
 }
 
-export function signup(data) {
+export function editUser(user) {
 
   return dispatch => {
-    dispatch(requestSignup());
-    return UserApi.signup(data)
+
+    dispatch(requestUserInit());
+    return UserApi.editUser(user)
       .then((response) => {
-        console.log(response)
-        dispatch(receiveSignup());
+        // Dispatch the success action
+        dispatch(requestEditUser());
+        return Promise.resolve(response);
+      })
+      .catch(err => {
+        if(err.status === 401){
+          dispatch(logoutUser())
+        }else{
+          dispatch(requestUserFailure(err.body.message))
+          console.error('Error: ', err)
+        }
+      });
+  };
+}
+
+
+export function deleteUser() {
+
+  return dispatch => {
+
+    dispatch(requestUserInit());
+    return UserApi.deleteUser()
+      .then((response) => {
+        // Dispatch the success action
+        dispatch(requestDeleteUser());
+        dispatch(logoutUser())
         return Promise.resolve();
       })
       .catch(err => {
-        dispatch(signupFailure(err.body.message))
-        console.error(err)
-        return Promise.reject();
-      }
-      );
+        if(err.status === 401){
+          dispatch(logoutUser())
+        }else{
+          dispatch(requestUserFailure(err.body.message))
+          console.error('Error: ', err)
+        }
+      });
   };
 }
-
-export function getSession() {
-
-  return dispatch => {
-    return UserApi.session()
-      .then((response) => {
-        console.log(response)
-        dispatch(recieveSession(response));
-        return Promise.resolve();
-      })
-      .catch(err => {
-        console.error(err)
-        return Promise.reject();
-      }
-      );
-  };
-}
-export function signupFailurePassword(message) {
-  return dispatch => {
-    dispatch(signupFailure(message));
-  };
-};

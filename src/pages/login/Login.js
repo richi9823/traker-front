@@ -13,7 +13,7 @@ import {
 } from 'reactstrap';
 import s from './Login.module.scss';
 import Widget from '../../components/Widget';
-import { getSession, loginUser, signup, signupFailurePassword } from '../../actions/user';
+import { loginUser, signup, signupFailurePassword } from '../../actions/auth';
 import jwt from 'jsonwebtoken';
 import config from '../../config'
 import { TrakerApi } from '../../constants/apiConf';

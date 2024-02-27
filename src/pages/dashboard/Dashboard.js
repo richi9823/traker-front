@@ -16,10 +16,10 @@ import {
 import { Toggle } from '../../components/Toggle';
 import Widget from '../../components/Widget';
 
-import { fetchVehicles } from '../../actions/vehicle';
+import { getAllVehicles } from '../../actions/vehicle';
 import s from './Dashboard.module.scss';
 import moment from 'moment/moment';
-import NewVehicle from '../../components/new/NewVehicle';
+import RegisterVehicle from '../../components/RegisterVehicle';
 
 class Dashboard extends Component {
   /* eslint-disable */
@@ -40,7 +40,7 @@ class Dashboard extends Component {
   };
 
   componentDidMount() {
-      this.props.dispatch(fetchVehicles(1,5));
+      this.props.dispatch(getAllVehicles(1,5));
   }
 
   formatDate = (str) => {
@@ -101,7 +101,7 @@ class Dashboard extends Component {
             </Widget>
           </Col>
           <Col sm={6}>
-            <NewVehicle />
+            <RegisterVehicle />
           </Col>
         </Row>
         <Row>

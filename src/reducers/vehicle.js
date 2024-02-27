@@ -2,13 +2,16 @@ import {
   CREATE_VEHICLE_SUCCESS,
   DELETE_VEHICLE_SUCCESS,
   EDIT_VEHICLE_SUCCESS,
-  FETCH_VEHICLE_SUCCESS,
-  GET_VEHICLE,
   REQUEST_VEHICLE_FAILURE,
-  REQUEST_VEHICLE_INIT
+  REQUEST_VEHICLE_INIT,
+  ADD_GPS_SUCCESS,
+  DELETE_IMAGE_SUCCESS,
+  GET_ALL_VEHICLES_SUCCESS,
+  GET_VEHICLE_SUCCESS,
+  SET_IMAGE_SUCCESS
 } from '../actions/vehicle';
 
-export default function posts(
+export default function vehicle(
   state = {
     isFetching: false,
   },
@@ -17,41 +20,26 @@ export default function posts(
   switch (action.type) {
     case REQUEST_VEHICLE_INIT:
       return Object.assign({}, state, {
-        isFetching: true,
+        isFetching: action.isFetching,
         message: null,
       });
     case REQUEST_VEHICLE_FAILURE:
       return Object.assign({}, state, {
-        isFetching: false,
-        message:action.message
+        isFetching: action.isFetching,
+        message_error:action.message
       });
-    case FETCH_VEHICLE_SUCCESS:
+    case CREATE_VEHICLE_SUCCESS:
+    case DELETE_VEHICLE_SUCCESS:
+    case EDIT_VEHICLE_SUCCESS:
+    case ADD_GPS_SUCCESS:
+    case DELETE_IMAGE_SUCCESS:
+    case GET_ALL_VEHICLES_SUCCESS:
+    case GET_VEHICLE_SUCCESS:
+    case SET_IMAGE_SUCCESS:
       return Object.assign({}, state, {
-        isFetching: false,
-        vehicles: action.vehicles,
+        isFetching: action.isFetching,
+        message: action.message,
       });
-    case EDIT_VEHICLE_SUCCESS:{
-      return Object.assign({}, state, {
-        isFetching: false,
-        message:action.message
-      });
-    }
-    case DELETE_VEHICLE_SUCCESS:{
-      return Object.assign({}, state, {
-      });
-    }
-    case CREATE_VEHICLE_SUCCESS:{
-      return Object.assign({}, state, {
-        isFetching: false,
-        message:action.message
-      });
-    }
-    case GET_VEHICLE:{
-      return Object.assign({}, state, {
-        isFetching: false,
-        selected:action.selected
-      });
-    }
     default:
       return state;
   }

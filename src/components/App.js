@@ -11,7 +11,7 @@ import LayoutComponent from '../components/Layout';
 //import DocumentationLayoutComponent from '../documentation/DocumentationLayout';
 import Login from '../pages/login';
 import Register from '../pages/register';
-import { getSession, logoutUser } from '../actions/user';
+import { getSession, logoutUser } from '../actions/auth';
 
 const PrivateRoute = ({dispatch, component, ...rest }) => {
     if (!Login.isAuthenticated(localStorage.getItem('id_token'))) {
