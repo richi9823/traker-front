@@ -1,10 +1,10 @@
-# TrakerApi.ListResponseNotificationResponseDto
+# TrakerApi.ListResponseNotificationShortResponseDto
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **total** | **Number** |  | [optional] 
-**items** | [**[NotificationResponseDto]**](NotificationResponseDto.md) |  | [optional] 
+**items** | [**[NotificationShortResponseDto]**](NotificationShortResponseDto.md) |  | [optional] 
 
 

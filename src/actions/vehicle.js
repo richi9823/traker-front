@@ -111,6 +111,7 @@ export function addGpsDevice(vehicleId, gps) {
           dispatch(requestVehicleFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
   };
 }
@@ -133,6 +134,7 @@ export function deleteImage(vehicleId) {
           dispatch(requestVehicleFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
   };
 }
@@ -156,6 +158,7 @@ export function editVehicle(id, vehicle) {
           dispatch(requestVehicleFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
 
   };
@@ -184,7 +187,7 @@ export function getAllVehicles(page, size, sort) {
           dispatch(requestVehicleFailure(err?.body?.message))
           console.error('Error: ', err)
         }
-        
+        return Promise.reject(err)
       });
 
   };
@@ -208,6 +211,7 @@ export function getVehicle(id) {
           dispatch(requestVehicleFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
   };
 }
@@ -230,6 +234,7 @@ export function createVehicle(vehicle) {
           dispatch(requestVehicleFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
 
   };
@@ -254,6 +259,7 @@ export function removeVehicle(id) {
           dispatch(requestVehicleFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
 
   };

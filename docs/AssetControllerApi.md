@@ -1,16 +1,16 @@
-# TrakerApi.PositionsControllerApi
+# TrakerApi.AssetControllerApi
 
 All URIs are relative to *http://localhost:8080*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getLastPosition**](PositionsControllerApi.md#getLastPosition) | **GET** /api/position/vehicle/{vehicleId} | 
+[**getAsset**](AssetControllerApi.md#getAsset) | **GET** /api/asset/{assetId} | 
 
 
 
-## getLastPosition
+## getAsset
 
-> FullPositionResponseDto getLastPosition(vehicleId)
+> Blob getAsset(assetId)
 
 
 
@@ -23,9 +23,9 @@ let defaultClient = TrakerApi.ApiClient.instance;
 let Bearer Authentication = defaultClient.authentications['Bearer Authentication'];
 Bearer Authentication.accessToken = "YOUR ACCESS TOKEN"
 
-let apiInstance = new TrakerApi.PositionsControllerApi();
-let vehicleId = 789; // Number | 
-apiInstance.getLastPosition(vehicleId).then((data) => {
+let apiInstance = new TrakerApi.AssetControllerApi();
+let assetId = "assetId_example"; // String | 
+apiInstance.getAsset(assetId).then((data) => {
   console.log('API called successfully. Returned data: ' + data);
 }, (error) => {
   console.error(error);
@@ -38,11 +38,11 @@ apiInstance.getLastPosition(vehicleId).then((data) => {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **vehicleId** | **Number**|  | 
+ **assetId** | **String**|  | 
 
 ### Return type
 
-[**FullPositionResponseDto**](FullPositionResponseDto.md)
+**Blob**
 
 ### Authorization
 
@@ -51,5 +51,5 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
 - **Content-Type**: Not defined
-- **Accept**: */*
+- **Accept**: application/octet-stream
 

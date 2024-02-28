@@ -1,17 +1,13 @@
-# TrakerApi.GPSResponseDto
+# TrakerApi.GPSShortResponseDto
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**id** | **Number** |  | [optional] 
 **name** | **String** |  | [optional] 
 **status** | **String** |  | [optional] 
-**traccarDeviceId** | **Number** |  | [optional] 
 **registerDeviceId** | **Number** |  | [optional] 
-**lastUpdated** | **Date** |  | [optional] 
-**traccarStatus** | **String** |  | [optional] 
-**totalDistance** | **Number** |  | [optional] 
-**actualDistance** | **Number** |  | [optional] 
 
 
 

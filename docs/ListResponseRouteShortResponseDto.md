@@ -1,10 +1,10 @@
-# TrakerApi.ListResponseVehicleResponseDto
+# TrakerApi.ListResponseRouteShortResponseDto
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **total** | **Number** |  | [optional] 
-**items** | [**[VehicleResponseDto]**](VehicleResponseDto.md) |  | [optional] 
+**items** | [**[RouteShortResponseDto]**](RouteShortResponseDto.md) |  | [optional] 
 
 

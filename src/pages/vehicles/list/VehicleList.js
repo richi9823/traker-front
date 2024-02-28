@@ -58,13 +58,11 @@ const columns = ({ handleAction }) => [
 class PostList extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
-    vehicles: PropTypes.array, // eslint-disable-line
     isFetching: PropTypes.bool,
   };
 
   static defaultProps = {
     isFetching: false,
-    vehicles: [],
   };
 
   static meta = {
@@ -78,6 +76,7 @@ class PostList extends React.Component {
     this.state = {
       showDeleteModal:false,
       selectItem:null,
+      vehicles:[],
       queryParams: {
       },
       paginationOptions: options,
@@ -87,9 +86,9 @@ class PostList extends React.Component {
 
   componentDidMount() {
       this.props.dispatch(getAllVehicles(1,5, null)).then((response) => {
-        console.log(response)
         this.setState((prev) => (
           {
+            vehicles: response.items,
             paginationOptions:{
             ...prev.paginationOptions,
             totalSize: response.total
@@ -106,6 +105,7 @@ class PostList extends React.Component {
       this.props.dispatch(getAllVehicles(paginationOptions.page, paginationOptions.sizePerPage, null)).then((response) => {
         this.setState((prev) => (
           {
+            vehicles: response.items,
             paginationOptions:{
             ...prev.paginationOptions,
             totalSize: response.total
@@ -162,6 +162,7 @@ class PostList extends React.Component {
       this.props.dispatch(getAllVehicles(paginationOptions.page, paginationOptions.sizePerPage, null)).then((response) => {
         this.setState((prev) => (
           {
+            vehicles: response.items,
             showDeleteModal:false,
             paginationOptions:{
             ...prev.paginationOptions,
@@ -173,8 +174,7 @@ class PostList extends React.Component {
   }
 
   render() {
-    const { paginationOptions, deleteItem ,showDeleteModal } = this.state;
-    console.log(paginationOptions)
+    const { paginationOptions, deleteItem ,showDeleteModal, vehicles } = this.state;
     return (
       <div className={s.root}>
         {showDeleteModal ? <DeleteModal isFetching={this.props.isFetching} onAccept={() => this.doRemove()} onCancel={()=> this.setState({deleteItem: null, showDeleteModal:false})} text={deleteItem.model}/> : null}
@@ -202,7 +202,7 @@ class PostList extends React.Component {
                     {({ paginationProps, paginationTableProps }) => (
                         <ToolkitProvider
                           keyField='id'
-                          data={!this.props.vehicles?.items ? [] : this.props.vehicles?.items}
+                          data={!vehicles ? [] : vehicles}
                           columns={this.columns}
                         >{
                             (props) => (
@@ -213,7 +213,7 @@ class PostList extends React.Component {
                                   classes='table table-head-custom table-vertical-center overflow-hidden'
                                   bootstrap4
                                   keyField='id'
-                                  data={!this.props.vehicles?.items ? [] : this.props.vehicles?.items}
+                                  data={!vehicles ? [] : vehicles}
                                   columns={this.columns}
                                   onTableChange={this.onTableChange}
                                   remote
@@ -242,7 +242,6 @@ class PostList extends React.Component {
 function mapStateToProps(state) {
   return {
     isFetching: state.vehicle.isFetching,
-    vehicles: state.vehicle.vehicles,
   };
 }
 

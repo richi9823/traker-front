@@ -6,6 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **model** | **String** |  | 
 **license** | **String** |  | 
-**deviceRegisterId** | **Number** |  | 
+**description** | **String** |  | [optional] 
+**deviceRequestDto** | [**GPSDeviceRequestDto**](GPSDeviceRequestDto.md) |  | [optional] 
 
 

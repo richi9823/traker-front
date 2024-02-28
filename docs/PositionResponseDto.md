@@ -1,4 +1,4 @@
-# TrakerApi.PositionsResponseDto
+# TrakerApi.PositionResponseDto
 
 ## Properties
 

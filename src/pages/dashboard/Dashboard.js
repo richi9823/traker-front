@@ -20,8 +20,9 @@ import { getAllVehicles } from '../../actions/vehicle';
 import s from './Dashboard.module.scss';
 import moment from 'moment/moment';
 import RegisterVehicle from '../../components/RegisterVehicle/RegisterVehicle';
-import { getAllAlerts } from '../../actions/alert';
+import { editAlert, getAllAlerts } from '../../actions/alert';
 import { getAllNotifications } from '../../actions/notification';
+import { getAlertType } from '../../enum/alertType';
 
 class Dashboard extends Component {
   /* eslint-disable */
@@ -46,12 +47,15 @@ class Dashboard extends Component {
   state = {
     vehicles: {items:[], total: 0},
     alerts:{items:[], total: 0},
-    notifications:{items:[], total: 0}
+    notifications:{items:[], total: 0},
+    showVehicleError: false
   };
 
   componentDidMount() {
       this.props.dispatch(getAllVehicles(1,5, null)).then((res) =>{
-        this.setState({vehicles: res})
+        this.setState({vehicles: res, showVehicleError:false})
+      }).catch(()=>{
+        this.setState({showVehicleError:true})
       });
       this.props.dispatch(getAllAlerts(null, 1,5, null)).then((res) =>{
         this.setState({alerts: res})
@@ -61,8 +65,24 @@ class Dashboard extends Component {
       });
   }
 
+  onRegister = () => {
+    this.props.dispatch(getAllVehicles(1,5, null)).then((res) =>{
+      this.setState({vehicles: res})
+    });
+  }
+
+  onToggled = (value, id) => {
+    const {alerts} = this.state;
+    this.props.dispatch(editAlert(id, {silenced:value})).then((res) =>{
+      var objIndex = alerts.items.findIndex(obj => obj.id === id)
+      alerts.items[objIndex].silenced = res.silenced
+      this.setState({alerts: alerts})
+    });
+  }
+
   render() {
-    const {vehicles, alerts, notifications} = this.state
+    
+    const {vehicles, alerts, notifications, showVehicleError} = this.state
     return (
       <div className={s.root}>
         <Breadcrumb>
@@ -84,7 +104,7 @@ class Dashboard extends Component {
                 </div>
               }
             >
-              {this.props.errorMessageVehicles && (
+              {this.props.errorMessageVehicles && showVehicleError &&(
                   <Alert className="alert-sm" bsstyle="danger">
                     {this.props.errorMessageVehicles}
                   </Alert>
@@ -121,7 +141,7 @@ class Dashboard extends Component {
             </Widget>
           </Col>
           <Col sm={6}>
-            <RegisterVehicle />
+            <RegisterVehicle onRegister={this.onRegister}/>
           </Col>
         </Row>
         <Row>
@@ -155,9 +175,9 @@ class Dashboard extends Component {
                 alerts?.items.map(a => (
                  <tr key={a.id}>
                   <td>{a.name}</td>
-                  <td>{a.type}</td>
+                  <td>{getAlertType(a.type)}</td>
                   <td>
-                    <Toggle toggled={a.silenced} onClick={()=>{}}/>
+                    <Toggle toggled={a.silenced} onClick={this.onToggled} id={a.id}/>
                   </td>
                 </tr>
                 ))}

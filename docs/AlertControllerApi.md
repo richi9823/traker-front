@@ -6,7 +6,8 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**createAlert**](AlertControllerApi.md#createAlert) | **POST** /api/alert | 
 [**editAlert**](AlertControllerApi.md#editAlert) | **PUT** /api/alert/{alertId} | 
-[**getVehicleAlerts**](AlertControllerApi.md#getVehicleAlerts) | **GET** /api/alert/vehicle/{vehicleId}/alerts | 
+[**getAlert**](AlertControllerApi.md#getAlert) | **GET** /api/alert/{alertId} | 
+[**getAlerts**](AlertControllerApi.md#getAlerts) | **GET** /api/alert | 
 [**removeAlert**](AlertControllerApi.md#removeAlert) | **DELETE** /api/alert/{alertId} | 
 
 
@@ -73,7 +74,7 @@ let Bearer Authentication = defaultClient.authentications['Bearer Authentication
 Bearer Authentication.accessToken = "YOUR ACCESS TOKEN"
 
 let apiInstance = new TrakerApi.AlertControllerApi();
-let alertId = 56; // Number | 
+let alertId = 789; // Number | 
 let alertRequestDto = new TrakerApi.AlertRequestDto(); // AlertRequestDto | 
 apiInstance.editAlert(alertId, alertRequestDto).then((data) => {
   console.log('API called successfully. Returned data: ' + data);
@@ -105,9 +106,9 @@ Name | Type | Description  | Notes
 - **Accept**: */*
 
 
-## getVehicleAlerts
+## getAlert
 
-> ListResponseAlertResponseDto getVehicleAlerts(vehicleId, opts)
+> AlertResponseDto getAlert(alertId)
 
 
 
@@ -121,13 +122,8 @@ let Bearer Authentication = defaultClient.authentications['Bearer Authentication
 Bearer Authentication.accessToken = "YOUR ACCESS TOKEN"
 
 let apiInstance = new TrakerApi.AlertControllerApi();
-let vehicleId = 56; // Number | 
-let opts = {
-  'page': 0, // Number | 
-  'size': 5, // Number | 
-  'sort': "'modifiedDate'" // String | 
-};
-apiInstance.getVehicleAlerts(vehicleId, opts).then((data) => {
+let alertId = 789; // Number | 
+apiInstance.getAlert(alertId).then((data) => {
   console.log('API called successfully. Returned data: ' + data);
 }, (error) => {
   console.error(error);
@@ -140,14 +136,65 @@ apiInstance.getVehicleAlerts(vehicleId, opts).then((data) => {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **vehicleId** | **Number**|  | 
+ **alertId** | **Number**|  | 
+
+### Return type
+
+[**AlertResponseDto**](AlertResponseDto.md)
+
+### Authorization
+
+[Bearer Authentication](../README.md#Bearer Authentication)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: */*
+
+
+## getAlerts
+
+> ListResponseAlertShortResponseDto getAlerts(opts)
+
+
+
+### Example
+
+```javascript
+import TrakerApi from 'traker_api';
+let defaultClient = TrakerApi.ApiClient.instance;
+// Configure Bearer (JWT) access token for authorization: Bearer Authentication
+let Bearer Authentication = defaultClient.authentications['Bearer Authentication'];
+Bearer Authentication.accessToken = "YOUR ACCESS TOKEN"
+
+let apiInstance = new TrakerApi.AlertControllerApi();
+let opts = {
+  'vehicleId': 789, // Number | 
+  'page': 0, // Number | 
+  'size': 5, // Number | 
+  'sort': "'modifiedDate'" // String | 
+};
+apiInstance.getAlerts(opts).then((data) => {
+  console.log('API called successfully. Returned data: ' + data);
+}, (error) => {
+  console.error(error);
+});
+
+```
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **vehicleId** | **Number**|  | [optional] 
  **page** | **Number**|  | [optional] [default to 0]
  **size** | **Number**|  | [optional] [default to 5]
  **sort** | **String**|  | [optional] [default to &#39;modifiedDate&#39;]
 
 ### Return type
 
-[**ListResponseAlertResponseDto**](ListResponseAlertResponseDto.md)
+[**ListResponseAlertShortResponseDto**](ListResponseAlertShortResponseDto.md)
 
 ### Authorization
 
@@ -175,7 +222,7 @@ let Bearer Authentication = defaultClient.authentications['Bearer Authentication
 Bearer Authentication.accessToken = "YOUR ACCESS TOKEN"
 
 let apiInstance = new TrakerApi.AlertControllerApi();
-let alertId = 56; // Number | 
+let alertId = 789; // Number | 
 apiInstance.removeAlert(alertId).then((data) => {
   console.log('API called successfully. Returned data: ' + data);
 }, (error) => {

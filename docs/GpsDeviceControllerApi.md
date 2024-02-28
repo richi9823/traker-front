@@ -1,18 +1,19 @@
-# TrakerApi.NotificationControllerApi
+# TrakerApi.GpsDeviceControllerApi
 
 All URIs are relative to *http://localhost:8080*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getNotification**](NotificationControllerApi.md#getNotification) | **GET** /api/notification/{notificationId} | 
-[**getNotifications**](NotificationControllerApi.md#getNotifications) | **GET** /api/notification | 
-[**readNotification**](NotificationControllerApi.md#readNotification) | **PUT** /api/notification/{notificationId} | 
+[**deleteGPSDevice**](GpsDeviceControllerApi.md#deleteGPSDevice) | **DELETE** /api/gps/{gpsId} | 
+[**getGPSDevice**](GpsDeviceControllerApi.md#getGPSDevice) | **GET** /api/gps/{gpsId} | 
+[**getListGPS**](GpsDeviceControllerApi.md#getListGPS) | **POST** /api/gps/vehicle/{vehicleId} | 
+[**updateStatusGPS**](GpsDeviceControllerApi.md#updateStatusGPS) | **PUT** /api/gps/{gpsId} | 
 
 
 
-## getNotification
+## deleteGPSDevice
 
-> NotificationResponseDto getNotification(notificationId)
+> deleteGPSDevice(gpsId)
 
 
 
@@ -25,9 +26,55 @@ let defaultClient = TrakerApi.ApiClient.instance;
 let Bearer Authentication = defaultClient.authentications['Bearer Authentication'];
 Bearer Authentication.accessToken = "YOUR ACCESS TOKEN"
 
-let apiInstance = new TrakerApi.NotificationControllerApi();
-let notificationId = 789; // Number | 
-apiInstance.getNotification(notificationId).then((data) => {
+let apiInstance = new TrakerApi.GpsDeviceControllerApi();
+let gpsId = 789; // Number | 
+apiInstance.deleteGPSDevice(gpsId).then(() => {
+  console.log('API called successfully.');
+}, (error) => {
+  console.error(error);
+});
+
+```
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **gpsId** | **Number**|  | 
+
+### Return type
+
+null (empty response body)
+
+### Authorization
+
+[Bearer Authentication](../README.md#Bearer Authentication)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: Not defined
+
+
+## getGPSDevice
+
+> GPSResponseDto getGPSDevice(gpsId)
+
+
+
+### Example
+
+```javascript
+import TrakerApi from 'traker_api';
+let defaultClient = TrakerApi.ApiClient.instance;
+// Configure Bearer (JWT) access token for authorization: Bearer Authentication
+let Bearer Authentication = defaultClient.authentications['Bearer Authentication'];
+Bearer Authentication.accessToken = "YOUR ACCESS TOKEN"
+
+let apiInstance = new TrakerApi.GpsDeviceControllerApi();
+let gpsId = 789; // Number | 
+apiInstance.getGPSDevice(gpsId).then((data) => {
   console.log('API called successfully. Returned data: ' + data);
 }, (error) => {
   console.error(error);
@@ -40,11 +87,11 @@ apiInstance.getNotification(notificationId).then((data) => {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **notificationId** | **Number**|  | 
+ **gpsId** | **Number**|  | 
 
 ### Return type
 
-[**NotificationResponseDto**](NotificationResponseDto.md)
+[**GPSResponseDto**](GPSResponseDto.md)
 
 ### Authorization
 
@@ -56,9 +103,9 @@ Name | Type | Description  | Notes
 - **Accept**: */*
 
 
-## getNotifications
+## getListGPS
 
-> ListResponseNotificationShortResponseDto getNotifications(opts)
+> [GPSShortResponseDto] getListGPS(vehicleId)
 
 
 
@@ -71,16 +118,9 @@ let defaultClient = TrakerApi.ApiClient.instance;
 let Bearer Authentication = defaultClient.authentications['Bearer Authentication'];
 Bearer Authentication.accessToken = "YOUR ACCESS TOKEN"
 
-let apiInstance = new TrakerApi.NotificationControllerApi();
-let opts = {
-  'vehicleId': 789, // Number | 
-  'alertId': 789, // Number | 
-  'readed': false, // Boolean | 
-  'page': 0, // Number | 
-  'size': 5, // Number | 
-  'sort': "'read'" // String | 
-};
-apiInstance.getNotifications(opts).then((data) => {
+let apiInstance = new TrakerApi.GpsDeviceControllerApi();
+let vehicleId = 789; // Number | 
+apiInstance.getListGPS(vehicleId).then((data) => {
   console.log('API called successfully. Returned data: ' + data);
 }, (error) => {
   console.error(error);
@@ -93,16 +133,11 @@ apiInstance.getNotifications(opts).then((data) => {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **vehicleId** | **Number**|  | [optional] 
- **alertId** | **Number**|  | [optional] 
- **readed** | **Boolean**|  | [optional] [default to false]
- **page** | **Number**|  | [optional] [default to 0]
- **size** | **Number**|  | [optional] [default to 5]
- **sort** | **String**|  | [optional] [default to &#39;read&#39;]
+ **vehicleId** | **Number**|  | 
 
 ### Return type
 
-[**ListResponseNotificationShortResponseDto**](ListResponseNotificationShortResponseDto.md)
+[**[GPSShortResponseDto]**](GPSShortResponseDto.md)
 
 ### Authorization
 
@@ -114,9 +149,9 @@ Name | Type | Description  | Notes
 - **Accept**: */*
 
 
-## readNotification
+## updateStatusGPS
 
-> Object readNotification(notificationId)
+> GPSResponseDto updateStatusGPS(gpsId, status)
 
 
 
@@ -129,9 +164,10 @@ let defaultClient = TrakerApi.ApiClient.instance;
 let Bearer Authentication = defaultClient.authentications['Bearer Authentication'];
 Bearer Authentication.accessToken = "YOUR ACCESS TOKEN"
 
-let apiInstance = new TrakerApi.NotificationControllerApi();
-let notificationId = 789; // Number | 
-apiInstance.readNotification(notificationId).then((data) => {
+let apiInstance = new TrakerApi.GpsDeviceControllerApi();
+let gpsId = 789; // Number | 
+let status = "status_example"; // String | 
+apiInstance.updateStatusGPS(gpsId, status).then((data) => {
   console.log('API called successfully. Returned data: ' + data);
 }, (error) => {
   console.error(error);
@@ -144,11 +180,12 @@ apiInstance.readNotification(notificationId).then((data) => {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **notificationId** | **Number**|  | 
+ **gpsId** | **Number**|  | 
+ **status** | **String**|  | 
 
 ### Return type
 
-**Object**
+[**GPSResponseDto**](GPSResponseDto.md)
 
 ### Authorization
 

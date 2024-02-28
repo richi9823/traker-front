@@ -1,18 +1,16 @@
-import { useState } from 'react'
+
 import React from 'react';
 import './styles.scss'
-export const Toggle = ({ label, toggled, onClick }) => {
-    const [isToggled, toggle] = useState(toggled)
-
+export const Toggle = ({ label, toggled, onClick, id }) => {
+    
     const callback = () => {
-        toggle(!isToggled)
-        onClick(!isToggled)
+       onClick(!toggled, id)
     }
 
     return (
         <div className='toggle'>
         <label>
-            <input type="checkbox" defaultChecked={isToggled} onClick={callback} />
+            <input type="checkbox" defaultChecked={toggled} checked={toggled} onClick={ callback} />
             <span />
             <strong>{label}</strong>
         </label>

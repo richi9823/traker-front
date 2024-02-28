@@ -22,12 +22,15 @@ class RegisterVehicle extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     message: PropTypes.string,
+    errorMessage: PropTypes.string,
     isFetching: PropTypes.bool,
+    onRegister: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
     isFetching: false,
     message: null,
+    errorMessage: null,
   };
 
   static meta = {
@@ -42,6 +45,8 @@ class RegisterVehicle extends React.Component {
       model: '',
       license: '',
       device_register_id: '',
+      showError:false,
+      showSuccess: false
     };
   }
 
@@ -58,25 +63,35 @@ class RegisterVehicle extends React.Component {
   }
 
   doCreateVehicle = (e) => {
+    const { onRegister } = this.props
     this.props
       .dispatch(
         createVehicle({
           model: this.state.model,
           license: this.state.license,
-          device_register_id: this.state.device_register_id
+          device_register_dto: this.state.device_register_id.length > 0 ? {
+            device_register_id: this.state.device_register_id
+          } : null
         }),
       )
-      .then(() =>
+      .then(() => {
+        onRegister()
         this.setState({
           model: '',
           license: '',
-          device_register_id:''
-        }),
-      );
+          device_register_id: '',
+          showError: false,
+          showSuccess: true,
+        });
+      }
+      ).catch(() =>{
+        this.setState({showError:true ,showSuccess:false})
+      })
     e.preventDefault();
   }
 
   render() {
+    const {showError, showSuccess} = this.state
     return (
       <div className={s.root}>
         <Row>
@@ -89,9 +104,14 @@ class RegisterVehicle extends React.Component {
               }
             >
               <Form onSubmit={this.doCreateVehicle}>
-                {this.props.message && (
+                {showSuccess && (
                   <Alert className="alert-sm" bsstyle="info">
-                    {this.props.message}
+                    Vehiculo registrado
+                  </Alert>
+                )}
+                {this.props.errorMessage && showError && (
+                  <Alert className="alert-sm alert-danger" bsstyle="danger">
+                    {this.props.errorMessage}
                   </Alert>
                 )}
                 <FormGroup>
@@ -123,7 +143,6 @@ class RegisterVehicle extends React.Component {
                     type="text"
                     placeholder="ID"
                     value={this.state.device_register_id}
-                    required
                     onChange={this.changeDeviceRegisterId}
                   />
                 </FormGroup>
@@ -147,6 +166,7 @@ function mapStateToProps(state) {
   return {
     isFetching: state.vehicle.isFetching,
     message: state.vehicle.message,
+    errorMessage: state.vehicle.errorMessage,
   };
 }
 
