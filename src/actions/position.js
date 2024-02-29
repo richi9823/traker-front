@@ -32,6 +32,7 @@ export function getPosition(vehicleId) {
         }else{
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
   };
 }

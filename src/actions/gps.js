@@ -74,6 +74,7 @@ export function deleteGps(gpsId) {
           dispatch(requestGpsFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
   };
 }
@@ -96,6 +97,7 @@ export function getGps(gpsId) {
           dispatch(requestGpsFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
   };
 }
@@ -119,6 +121,7 @@ export function getAllGps(vehicleId) {
           dispatch(requestGpsFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
   };
 }
@@ -142,6 +145,7 @@ export function updateStatusGps(gpsId, status) {
           dispatch(requestGpsFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
   };
 }

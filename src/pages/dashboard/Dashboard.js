@@ -57,7 +57,7 @@ class Dashboard extends Component {
       }).catch(()=>{
         this.setState({showVehicleError:true})
       });
-      this.props.dispatch(getAllAlerts(null, 1,5, null)).then((res) =>{
+      this.props.dispatch(getAllAlerts(null, 0,5, null)).then((res) =>{
         this.setState({alerts: res})
       });
       this.props.dispatch(getAllNotifications(null, null, false, 1,5, null)).then((res) =>{

@@ -67,6 +67,7 @@ export function getNotification(notificationId) {
           dispatch(requestNotificationFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
   };
 }
@@ -97,6 +98,7 @@ export function getAllNotifications(vehicleId, alertId, readed, page, size, sort
           dispatch(requestNotificationFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
   };
 }
@@ -119,6 +121,7 @@ export function readNotification(notificationId) {
           dispatch(requestNotificationFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
   };
 }

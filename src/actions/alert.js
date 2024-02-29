@@ -81,6 +81,7 @@ export function getAlert(id) {
           dispatch(requestAlertFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
   };
 }
@@ -103,6 +104,7 @@ export function createAlert(alert) {
           dispatch(requestAlertFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
 
   };
@@ -126,6 +128,7 @@ export function editAlert(id, alert) {
           dispatch(requestAlertFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
 
   };
@@ -138,7 +141,7 @@ export function getAllAlerts(vehicleId, page, size, sort) {
     dispatch(requestAlertInit());
     return AlertApi.getAlerts({
       vehicleId,
-      page:page-1,
+      page,
       size ,
       sort
     })
@@ -155,7 +158,7 @@ export function getAllAlerts(vehicleId, page, size, sort) {
           dispatch(requestAlertFailure(err?.body?.message))
           console.error('Error: ', err)
         }
-        
+        return Promise.reject(err)
       });
 
   };
@@ -179,6 +182,7 @@ export function removeAlert(id) {
           dispatch(requestAlertFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
 
   };

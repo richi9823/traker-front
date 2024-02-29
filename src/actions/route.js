@@ -73,6 +73,7 @@ export function getAllRoute(vehicleId, page, size, since, until) {
           dispatch(requestRouteFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
   };
 }
@@ -95,6 +96,7 @@ export function getRoute(routeId) {
           dispatch(requestRouteFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
   };
 }
@@ -117,6 +119,7 @@ export function deleteRoute(routeId) {
           dispatch(requestRouteFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
   };
 }

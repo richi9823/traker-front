@@ -67,6 +67,7 @@ export function getUser() {
           dispatch(requestUserFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
   };
 }
@@ -89,6 +90,7 @@ export function editUser(user) {
           dispatch(requestUserFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
   };
 }
@@ -113,6 +115,7 @@ export function deleteUser() {
           dispatch(requestUserFailure(err?.body?.message))
           console.error('Error: ', err)
         }
+        return Promise.reject(err)
       });
   };
 }
