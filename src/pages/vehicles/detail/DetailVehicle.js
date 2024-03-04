@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, {Component} from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
@@ -24,15 +25,9 @@ import {
   Input,
   Table,
 } from 'reactstrap';
-import {
-  withGoogleMap,
-  withScriptjs,
-  GoogleMap,
-  Marker,
-} from 'react-google-maps';
 import s from './DetailVehicle.module.scss';
 import Widget from '../../../components/Widget/Widget';
-import { editVehicle, getVehicle } from '../../../actions/vehicle';
+import { addGpsDevice, editVehicle, getVehicle } from '../../../actions/vehicle';
 import Maps from '../../google/Google';
 import { getAllAlerts } from '../../../actions/alert';
 import { getAllNotifications } from '../../../actions/notification';
@@ -41,7 +36,9 @@ import { getPosition } from '../../../actions/position';
 import moment from 'moment';
 import { Toggle } from '../../../components/Toggle';
 import { getStatus } from '../../../enum/GPSStatus';
-import { updateStatusGps } from '../../../actions/gps';
+import { deleteGps, updateStatusGps } from '../../../actions/gps';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import AddGPSModal from '../../../components/Modals/AddGPSModal';
 
 
 class DetailVehicle extends Component {
@@ -52,6 +49,8 @@ class DetailVehicle extends Component {
     match: PropTypes.object.isRequired,
     message: PropTypes.string.isRequired,
     errorMessage: PropTypes.string.isRequired,
+    errorMessageGPS: PropTypes.string.isRequired,
+    isFetchingGPS: PropTypes.bool
   };
   /* eslint-enable */
 
@@ -66,11 +65,16 @@ class DetailVehicle extends Component {
     notifications:{},
     alerts:{},
     routes:{},
-    position:{},
+    position:{
+      latitude:0,
+      longitude:0
+    },
     showError: false,
     showSuccess: false,
     online: false,
     showErrorGPS:false,
+    showErrorGPSModal:false,
+    modalGPS:false
   };
 
   handleChange = (event) => {
@@ -151,20 +155,12 @@ class DetailVehicle extends Component {
 
   buclePositions = () =>{
    this.props.dispatch(getPosition(this.props.match.params.id)).then((response)=>{
-     this.setState({posiiton: response});
+     this.setState({position: response});
    }).catch((err) => {
      console.warn(err)
    })
   }
 
-  Map = withScriptjs(withGoogleMap(() =>
-  <GoogleMap
-    defaultZoom={12}
-    defaultCenter={{ lat: parseFloat(-37.813179), lng: parseFloat(144.950259) }}
-  >
-    <Marker position={{ lat: -37.813179, lng: 144.950259 }} />
-  </GoogleMap>,
-));
 
 onToggled = (value, id) => {
   this.props.dispatch(updateStatusGps(id, value ? 'ACTIVE' : 'INACTIVE')).then((res) =>{
@@ -176,13 +172,40 @@ onToggled = (value, id) => {
   });
 }
 
+deleteGps = (id) => {
+  this.props.dispatch(deleteGps(id)).then(() =>{
+    this.props.dispatch(getVehicle(this.props.match.params.id)).then((response)=>{
+      this.setState({vehicle: response});
+    }).catch((err) => {
+      this.setState({showErrorGPS:true})
+    })
+  });
+}
+
+openModalGPS=()=>{
+  this.setState({modalGPS:true})
+}
+
+addGPS=(value)=>{
+  this.props.dispatch(addGpsDevice(this.props.match.params.id, value)).then(() =>{
+    this.props.dispatch(getVehicle(this.props.match.params.id)).then((response)=>{
+      this.setState({vehicle: response, showErrorGPSModal: false, modalGPS:false});
+    }).catch((err) => {
+      this.setState({showError:true})
+    })
+  }).catch((err) => {
+    this.setState({showErrorGPSModal:true})
+  });
+}
+
 
 
   render() {
-    const {vehicle, showError, showErrorGPS, showSuccess, notifications, routes, alerts, online} = this.state;
-    const GPSACTIVE = vehicle?.gps?.filter((g) => g.status==='ACTIVE')
+    const {vehicle, position, showError, showErrorGPS, showErrorGPSModal, showSuccess, notifications, routes, alerts, online, modalGPS} = this.state;
+    console.log(position)
     return (
       <div className={s.root}>
+        {modalGPS ? <AddGPSModal isFetching={this.props.isFetching} errorMessage={this.props.errorMessage} showErrorGPSModal={showErrorGPSModal} addGPS={this.addGPS} onCancel={()=> this.setState({modalGPS:false})} text={"Nuevo dispositivo"}/> : null}
         <Breadcrumb>
           <BreadcrumbItem>YOU ARE HERE</BreadcrumbItem>
           <BreadcrumbItem>Vehiculos</BreadcrumbItem>
@@ -207,7 +230,7 @@ onToggled = (value, id) => {
               }
             >
               <div style={{minHeight: "550px"}}>
-                  <Maps/>
+                   <Maps latitude={position.latitude} longitude={position.longitude}/>
               </div>
               
             </Widget>
@@ -302,19 +325,19 @@ onToggled = (value, id) => {
               }
             >
               <FormGroup>
-              <Label className="mr-2">Estado</Label>
+              <Label className="mr-2">Estado:</Label>
                 <span>
                     <span className="fw-semi-bold"> {online ? 'online' : 'offline'}</span>
                 </span>
               </FormGroup>
               <FormGroup>
-              <Label className="mr-2">Distancia total</Label>
+              <Label className="mr-2">Distancia total:</Label>
                 <span>
                     <span className="fw-semi-bold">{ (vehicle.total_distance/100).toFixed(2)} Km</span>
                 </span>
               </FormGroup>
               <FormGroup>
-              <Label className="mr-2">Fecha registro</Label>
+              <Label className="mr-2">Fecha registro:</Label>
                 <span>
                     <span className="fw-semi-bold">{ moment(vehicle.created_date).format("DD-MM-YYYY")}</span>
                 </span>
@@ -332,11 +355,18 @@ onToggled = (value, id) => {
                 </div>
               }
             >
-              {this.props.errorMessageAlert && (
+              {this.props.errorMessageGPS && showErrorGPS && (
                   <Alert className="alert-sm" bsstyle="danger">
-                    {this.props.errorMessageAlert}
+                    {this.props.errorMessageGPS}
                   </Alert>
                 )}
+                <div className="d-flex justify-content-end">
+                  <ButtonGroup>
+                <Button color="danger" type="submit" onClick={()=>this.openModalGPS()}>
+                      {this.props.isFetchingGPS ? 'Cargando...' : 'Nuevo dispositivo'}
+                    </Button>
+                    </ButtonGroup>
+                    </div>
               <Table responsive borderless className={cx('mb-0', s.usersTable)}>
                 <thead>
                   <tr>
@@ -354,6 +384,21 @@ onToggled = (value, id) => {
                   <td>{a.name}</td>
                   <td>
                     <Toggle toggled={getStatus(a.status)} onClick={this.onToggled} id={a.id}/>
+                  </td>
+                  <td>
+                    <OverlayTrigger
+                      placement='top'
+                      overlay={<Tooltip>Delete</Tooltip>}
+                    >
+                        <a
+                          className='btn btn-outline-danger btn-sm mx-1'
+                          onClick={() => this.deleteGps(a.id)}
+                        >
+                  <span
+                  className="glyphicon glyphicon-trash"
+                  />
+                      </a>
+                    </OverlayTrigger>
                   </td>
                 </tr>
                 ))}
@@ -381,7 +426,9 @@ function mapStateToProps(state) {
   return {
     isFetching: state.vehicle.isFetching,
     message: state.vehicle.message,
-    errorMessage: state.vehicle.errorMessage
+    errorMessage: state.vehicle.errorMessage,
+    errorMessageGPS: state.gps.errorMessage,
+    isFetchingGPS: state.gps.isFetching
   };
 }
 

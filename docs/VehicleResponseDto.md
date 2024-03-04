@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **model** | **String** |  | [optional] 
 **license** | **String** |  | [optional] 
 **image** | **String** |  | [optional] 
+**description** | **String** |  | [optional] 
 **gps** | [**[GPSShortResponseDto]**](GPSShortResponseDto.md) |  | [optional] 
 **createdDate** | **Date** |  | [optional] 
 **modifiedDate** | **Date** |  | [optional] 
