@@ -74,7 +74,8 @@ class DetailVehicle extends Component {
     online: false,
     showErrorGPS:false,
     showErrorGPSModal:false,
-    modalGPS:false
+    modalGPS:false,
+    interval: null,
   };
 
   handleChange = (event) => {
@@ -118,11 +119,9 @@ class DetailVehicle extends Component {
       this.props.dispatch(getPosition(this.props.match.params.id)).then((re)=>{
         this.setState({position: re});
         if((moment(re.gps.last_updated).isBefore(moment().subtract(3,'minutes')))){
-          setInterval(this.buclePositions,15000)
-          this.setState({online:false})
+          this.setState({online:false, interval:setInterval(this.buclePositions,15000) })
         }else{
-          setInterval(this.buclePositions,3000)
-          this.setState({online:true})
+          this.setState({online:true, interval: setInterval(this.buclePositions,3000)})
         }
       }).catch((err) => {
         console.warn(err)
@@ -144,7 +143,7 @@ class DetailVehicle extends Component {
       this.setState({showError:true})
     })
 
-    this.props.dispatch(getAllRoute(this.props.match.params.id, null, null, null, null)).then((response)=>{
+    this.props.dispatch(getAllRoute(this.props.match.params.id, 1, null, null, null)).then((response)=>{
       this.setState({routes: response});
     }).catch((err) => {
       this.setState({showError:true})
@@ -198,6 +197,10 @@ addGPS=(value)=>{
   });
 }
 
+removeTimeout = () =>{
+  const { interval} = this.state
+  clearInterval(interval)
+}
 
 
   render() {
@@ -230,7 +233,7 @@ addGPS=(value)=>{
               }
             >
               <div style={{minHeight: "550px"}}>
-                   <Maps latitude={position.latitude} longitude={position.longitude}/>
+                   <Maps ubication={{latitude: position.latitude, longitude:position.longitude}}/>
               </div>
               
             </Widget>
@@ -299,7 +302,7 @@ addGPS=(value)=>{
           </Col>
           <Col sm={12} md={12}>
             <ListGroup>
-              <Link to="/app" className="list-group-item">
+              <Link onClick={()=> this.removeTimeout()} to={"/app/vehicles/" + vehicle.id + "/routes"} className="list-group-item">
                 <i className="fa fa-phone mr-xs text-secondary" />{' '}
                 Trayectorias <Badge className="ml-xs" color="danger">{routes.total}</Badge>
               </Link>
