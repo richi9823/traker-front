@@ -52,9 +52,6 @@ class App extends React.PureComponent {
                     <Route path="/" exact render={() => <Redirect to="/app/main"/>}/>
                     <Route path="/app" exact render={() => <Redirect to="/app/main"/>}/>
                     <PrivateRoute path="/app" dispatch={this.props.dispatch} component={LayoutComponent}/>
-                    <Route path="/documentation" exact
-                           render={() => <Redirect to="/documentation/getting-started/overview"/>}/>
-                    {/* <Route path="/documentation" component={DocumentationLayoutComponent}/> */}
                     <Route path="/register" exact component={Register}/>
                     <Route path="/login" exact component={Login}/>
                     <Route path="/error" exact component={ErrorPage}/>
