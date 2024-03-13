@@ -1,12 +1,28 @@
 import React, {Component} from 'react';
+import cx from 'classnames';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-
+import {
+  Row,
+  Col,
+  Alert,
+  Button,
+  Breadcrumb,
+  BreadcrumbItem,
+  Badge,
+  Table,
+} from 'reactstrap';
+import { Toggle } from '../../components/Toggle';
+import Widget from '../../components/Widget';
 
 import { getAllVehicles } from '../../actions/vehicle';
+import s from './Dashboard.module.scss';
+import moment from 'moment/moment';
+import RegisterVehicle from '../../components/RegisterVehicle/RegisterVehicle';
 import { editAlert, getAllAlerts } from '../../actions/alert';
 import { getAllNotifications } from '../../actions/notification';
-import DashboardView from './DashboardView';
+import { getAlertType } from '../../enum/alertType';
 
 class Dashboard extends Component {
   /* eslint-disable */
@@ -67,20 +83,161 @@ class Dashboard extends Component {
   render() {
     
     const {vehicles, alerts, notifications, showVehicleError} = this.state
-    return <DashboardView
-        vehicles={vehicles}
-        alerts={alerts}
-        notifications={notifications}
-        showVehicleError={showVehicleError}
-        onToggled = {this.onToggled}
-        onRegister ={this.onRegister}
-        isFetchingVehicles ={this.props.isFetchingVehicles}
-        isFetchingNotifications ={this.props.isFetchingNotifications}
-        isFetchingAlerts ={this.props.isFetchingAlerts}
-        errorMessageVehicles ={this.props.errorMessageVehicles}
-        errorMessageNotification ={this.props.errorMessageNotification}
-        errorMessageAlert ={this.props.errorMessageAlert}
-      />
+    return (
+      <div className={s.root}>
+        <Breadcrumb>
+          <BreadcrumbItem>YOU ARE HERE</BreadcrumbItem>
+          <BreadcrumbItem active>Dashboard</BreadcrumbItem>
+        </Breadcrumb>
+        <h1 className="mb-lg">Dashboard</h1>
+        <Row>
+          <Col sm={6}>
+            <Widget
+              title={
+                <div>
+                  <h5 className="mt-0 mb-0">
+                    Vehiculos
+                  </h5>
+                  <p className="fs-sm mb-0 text-muted">
+                    vehiculos con actualizaciones recientes
+                  </p>
+                </div>
+              }
+            >
+              {this.props.errorMessageVehicles && showVehicleError &&(
+                  <Alert className="alert-sm" bsstyle="danger">
+                    {this.props.errorMessageVehicles}
+                  </Alert>
+                )}
+              <table className="table table-sm table-no-border mb-0">
+                <tbody>
+                {vehicles?.items &&
+                vehicles?.items.length > 0 &&
+                vehicles?.items.map(v => (
+                  <tr key={v.id}>
+                    <td>{moment(v.modified_date).format('DD/MM/YYYY HH:mm')}</td>
+                    <td>
+                      <Link to={"/app/vehicles/" + v.id}>{v.model + " " + v.license}</Link>
+                    </td>
+                  </tr>
+                ))}
+                {this.props.isFetchingVehicles && (
+                  <tr>
+                    <td colSpan="100">Cargando...</td>
+                  </tr>
+                )}
+                {vehicles?.total === 0 && !this.props.isFetchingVehicles && 
+                  <tr>
+                    <td colSpan="100">No hay registros...</td>
+                  </tr> 
+                  }
+                </tbody>
+              </table>
+              <div className="d-flex justify-content-end">
+                <Link to="/app/vehicles" className="btn btn-default">
+                 Ver todos <Badge className="ml-xs" color="danger">{vehicles?.total ? vehicles?.total: 0}</Badge>
+                </Link>
+              </div>
+            </Widget>
+          </Col>
+          <Col sm={6}>
+            <RegisterVehicle onRegister={this.onRegister}/>
+          </Col>
+        </Row>
+        <Row>
+          <Col sm={12} md={6}>
+            <Widget
+              title={
+                <div>
+                  <h5 className="mt-0 mb-3">
+                    <i className="fa fa-user mr-xs opacity-70" />{' '}
+                    Alertas recientes
+                  </h5>
+                </div>
+              }
+            >
+              {this.props.errorMessageAlert && (
+                  <Alert className="alert-sm" bsstyle="danger">
+                    {this.props.errorMessageAlert}
+                  </Alert>
+                )}
+              <Table responsive borderless className={cx('mb-0', s.usersTable)}>
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Silenciada</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {alerts?.items &&
+                alerts?.items.length > 0 &&
+                alerts?.items.map(a => (
+                 <tr key={a.id}>
+                  <td>{a.name}</td>
+                  <td>{getAlertType(a.type)}</td>
+                  <td>
+                    <Toggle toggled={a.silenced} onClick={this.onToggled} id={a.id}/>
+                  </td>
+                </tr>
+                ))}
+                {this.props.isFetchingAlerts && (
+                  <tr>
+                    <td colSpan="100">Cargando...</td>
+                  </tr>
+                )}
+                {alerts?.total === 0 && !this.props.isFetchingAlerts && 
+                  <tr>
+                    <td colSpan="100">No hay registros...</td>
+                  </tr> 
+                  }
+                </tbody>
+              </Table>
+            </Widget>
+          </Col>
+          <Col sm={12} md={6}>
+            <Widget title="Notificaciones recientes">
+            {this.props.errorMessageNotification && (
+                  <Alert className="alert-sm" bsstyle="danger">
+                    {this.props.errorMessageNotification}
+                  </Alert>
+                )}
+                {notifications?.items &&
+                notifications?.items.length > 0 &&
+                notifications?.items.map(n => (
+                  <Alert
+                  className="alert-sm clearfix"
+                  color="warning"
+                  key={n.key}
+                >
+                  <span className="fw-semi-bold">
+                    </span> 
+                    El vehiculo {n.vehicle.model} - {n.vehicle.license} tiene una notificacion de tipo {n.alert.type}
+                  <span className="pull-right mr-sm">
+                    <Button color="default" size="sm">
+                      Ver detalle
+                    </Button>
+                    <span className="px-2"> or </span>
+                    <Button color="default" size="sm">Leido</Button>
+                  </span>
+                </Alert>
+                ))}
+                {this.props.isFetchingNotifications && (
+                  <tr>
+                    <td colSpan="100">Cargando...</td>
+                  </tr>
+                )}
+                {notifications?.total === 0 && !this.props.isFetchingNotifications && 
+                  <tr>
+                    <td colSpan="100">No hay registros...</td>
+                  </tr> 
+                  }
+            </Widget>
+          </Col>
+        </Row>
+      
+      </div>
+    );
   }
 }
 
