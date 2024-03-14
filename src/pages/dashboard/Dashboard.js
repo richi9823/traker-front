@@ -27,7 +27,7 @@ import { getAlertType } from '../../enum/alertType';
 class Dashboard extends Component {
   /* eslint-disable */
   static propTypes = {
-    posts: PropTypes.any,
+    vehicleList: PropTypes.object.isRequired,
     isFetchingVehicles: PropTypes.bool,
     isFetchingNotifications: PropTypes.bool,
     isFetchingAlerts: PropTypes.bool,
@@ -37,15 +37,15 @@ class Dashboard extends Component {
 
   static defaultProps = {
     isFetchingVehicles: false,
+    errorMessageVehicles: null,
+    vehicleList: {items:[], total: 0},
     isFetchingNotifications: false,
     isFetchingAlerts: false,
-    errorMessageVehicles: null,
     errorMessageNotification: null,
     errorMessageAlert: null,
   };
 
   state = {
-    vehicles: {items:[], total: 0},
     alerts:{items:[], total: 0},
     notifications:{items:[], total: 0},
     showVehicleError: false
@@ -53,7 +53,7 @@ class Dashboard extends Component {
 
   componentDidMount() {
       this.props.dispatch(getAllVehicles(1,5, null)).then((res) =>{
-        this.setState({vehicles: res, showVehicleError:false})
+        this.setState({showVehicleError:false})
       }).catch(()=>{
         this.setState({showVehicleError:true})
       });
@@ -66,9 +66,7 @@ class Dashboard extends Component {
   }
 
   onRegister = () => {
-    this.props.dispatch(getAllVehicles(1,5, null)).then((res) =>{
-      this.setState({vehicles: res})
-    });
+    this.props.dispatch(getAllVehicles(1,5, null));
   }
 
   onToggled = (value, id) => {
@@ -81,7 +79,7 @@ class Dashboard extends Component {
   }
 
   render() {
-    
+    const {vehicleList} = this.props;
     const {vehicles, alerts, notifications, showVehicleError} = this.state
     return (
       <div className={s.root}>
@@ -111,9 +109,9 @@ class Dashboard extends Component {
                 )}
               <table className="table table-sm table-no-border mb-0">
                 <tbody>
-                {vehicles?.items &&
-                vehicles?.items.length > 0 &&
-                vehicles?.items.map(v => (
+                {vehicleList?.items &&
+                vehicleList?.items.length > 0 &&
+                vehicleList?.items.map(v => (
                   <tr key={v.id}>
                     <td>{moment(v.modified_date).format('DD/MM/YYYY HH:mm')}</td>
                     <td>
@@ -126,7 +124,7 @@ class Dashboard extends Component {
                     <td colSpan="100">Cargando...</td>
                   </tr>
                 )}
-                {vehicles?.total === 0 && !this.props.isFetchingVehicles && 
+                {vehicleList?.total === 0 && !this.props.isFetchingVehicles && 
                   <tr>
                     <td colSpan="100">No hay registros...</td>
                   </tr> 
@@ -135,7 +133,7 @@ class Dashboard extends Component {
               </table>
               <div className="d-flex justify-content-end">
                 <Link to="/app/vehicles" className="btn btn-default">
-                 Ver todos <Badge className="ml-xs" color="danger">{vehicles?.total ? vehicles?.total: 0}</Badge>
+                 Ver todos <Badge className="ml-xs" color="danger">{vehicleList?.total ? vehicleList?.total: 0}</Badge>
                 </Link>
               </div>
             </Widget>
@@ -244,9 +242,10 @@ class Dashboard extends Component {
 function mapStateToProps(state) {
   return {
     isFetchingVehicles: state.vehicle.isFetching,
+    errorMessageVehicles: state.vehicle.errorMessage,
+    vehicleList: state.vehicle.vehicleList,
     isFetchingNotifications: state.notification.isFetching,
     isFetchingAlerts: state.alert.isFetching,
-    errorMessageVehicles: state.vehicle.errorMessage,
     errorMessageNotification: state.notification.errorMessage,
     errorMessageAlert: state.alert.errorMessage,
   };

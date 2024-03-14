@@ -8,12 +8,17 @@ import {
   DELETE_IMAGE_SUCCESS,
   GET_ALL_VEHICLES_SUCCESS,
   GET_VEHICLE_SUCCESS,
-  SET_IMAGE_SUCCESS
+  SET_IMAGE_SUCCESS,
+  EDIT_VEHICLE_RECORD
 } from '../actions/vehicle';
 
 export default function vehicle(
   state = {
     isFetching: false,
+    message: null,
+    errorMessage: null,
+    vehicle:{},
+    vehicleList:{items:[], total: 0},
   },
   action,
 ) {
@@ -30,12 +35,29 @@ export default function vehicle(
         errorMessage:action.errorMessage
       });
     case CREATE_VEHICLE_SUCCESS:
-    case DELETE_VEHICLE_SUCCESS:
     case EDIT_VEHICLE_SUCCESS:
+    case GET_VEHICLE_SUCCESS:
+      return Object.assign({}, state, {
+        isFetching: action.isFetching,
+        message: action.message,
+        vehicle: action.vehicle,
+      });
+    case GET_ALL_VEHICLES_SUCCESS: 
+    return Object.assign({}, state, {
+      isFetching: action.isFetching,
+      message: action.message,
+      vehicleList: action.vehicleList,
+    });
+    case EDIT_VEHICLE_RECORD: 
+    return Object.assign({}, state, {
+      vehicle: {
+        ...state.vehicle,
+        [action.name]: action.newValue,
+      }
+    });     
+    case DELETE_VEHICLE_SUCCESS:
     case ADD_GPS_SUCCESS:
     case DELETE_IMAGE_SUCCESS:
-    case GET_ALL_VEHICLES_SUCCESS:
-    case GET_VEHICLE_SUCCESS:
     case SET_IMAGE_SUCCESS:
       return Object.assign({}, state, {
         isFetching: action.isFetching,

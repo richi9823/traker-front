@@ -27,7 +27,7 @@ import {
 } from 'reactstrap';
 import s from './DetailVehicle.module.scss';
 import Widget from '../../../components/Widget/Widget';
-import { addGpsDevice, editVehicle, getVehicle } from '../../../actions/vehicle';
+import { addGpsDevice, editVehicle, editVehicleRecord, getVehicle } from '../../../actions/vehicle';
 import Maps from '../../google/Google';
 import { getAllAlerts } from '../../../actions/alert';
 import { getAllNotifications } from '../../../actions/notification';
@@ -50,7 +50,8 @@ class DetailVehicle extends Component {
     message: PropTypes.string.isRequired,
     errorMessage: PropTypes.string.isRequired,
     errorMessageGPS: PropTypes.string.isRequired,
-    isFetchingGPS: PropTypes.bool
+    isFetchingGPS: PropTypes.bool,
+    vehicle: PropTypes.object.isRequired
   };
   /* eslint-enable */
 
@@ -58,10 +59,10 @@ class DetailVehicle extends Component {
     isFetching: false,
     message: null,
     errorMessage: null,
+    vehicle:{},
   };
 
   state = {
-    vehicle: {},
     notifications:{},
     alerts:{},
     routes:{},
@@ -85,24 +86,17 @@ class DetailVehicle extends Component {
       },
     } = event;
     const newValue = type === 'checkbox' ? checked : value;
-
-    this.setState((prevState) => ({
-      vehicle: {
-        ...prevState.vehicle,
-        [name]: newValue,
-      },
-    }));
+    this.props.dispatch(editVehicleRecord(name, newValue))
   };
 
   editVehicle = (e) => {
-    const { vehicle } = this.state
+    const { vehicle } = this.props
     this.props
       .dispatch(
         editVehicle(this.props.match.params.id, vehicle),
       )
-      .then((res) => {
+      .then(() => {
         this.setState({
-          vehicle: res,
           showError: false,
           showSuccess: true,
         });
@@ -114,8 +108,7 @@ class DetailVehicle extends Component {
   }
 
   componentDidMount() {
-    this.props.dispatch(getVehicle(this.props.match.params.id)).then((response)=>{
-      this.setState({vehicle: response});
+    this.props.dispatch(getVehicle(this.props.match.params.id)).then(()=>{
       this.props.dispatch(getPosition(this.props.match.params.id)).then((re)=>{
         this.setState({position: re});
         if((moment(re.gps.last_updated).isBefore(moment().subtract(3,'minutes')))){
@@ -163,8 +156,7 @@ class DetailVehicle extends Component {
 
 onToggled = (value, id) => {
   this.props.dispatch(updateStatusGps(id, value ? 'ACTIVE' : 'INACTIVE')).then((res) =>{
-    this.props.dispatch(getVehicle(this.props.match.params.id)).then((response)=>{
-      this.setState({vehicle: response});
+    this.props.dispatch(getVehicle(this.props.match.params.id)).then(()=>{
     }).catch((err) => {
       this.setState({showError:true})
     })
@@ -173,8 +165,7 @@ onToggled = (value, id) => {
 
 deleteGps = (id) => {
   this.props.dispatch(deleteGps(id)).then(() =>{
-    this.props.dispatch(getVehicle(this.props.match.params.id)).then((response)=>{
-      this.setState({vehicle: response});
+    this.props.dispatch(getVehicle(this.props.match.params.id)).then(()=>{
     }).catch((err) => {
       this.setState({showErrorGPS:true})
     })
@@ -187,8 +178,8 @@ openModalGPS=()=>{
 
 addGPS=(value)=>{
   this.props.dispatch(addGpsDevice(this.props.match.params.id, value)).then(() =>{
-    this.props.dispatch(getVehicle(this.props.match.params.id)).then((response)=>{
-      this.setState({vehicle: response, showErrorGPSModal: false, modalGPS:false});
+    this.props.dispatch(getVehicle(this.props.match.params.id)).then(()=>{
+      this.setState({showErrorGPSModal: false, modalGPS:false});
     }).catch((err) => {
       this.setState({showError:true})
     })
@@ -204,8 +195,8 @@ removeTimeout = () =>{
 
 
   render() {
-    const {vehicle, position, showError, showErrorGPS, showErrorGPSModal, showSuccess, notifications, routes, alerts, online, modalGPS} = this.state;
-    console.log(position)
+    const {vehicle} = this.props
+    const {position, showError, showErrorGPS, showErrorGPSModal, showSuccess, notifications, routes, alerts, online, modalGPS} = this.state;
     return (
       <div className={s.root}>
         {modalGPS ? <AddGPSModal isFetching={this.props.isFetching} errorMessage={this.props.errorMessage} showErrorGPSModal={showErrorGPSModal} addGPS={this.addGPS} onCancel={()=> this.setState({modalGPS:false})} text={"Nuevo dispositivo"}/> : null}
@@ -428,6 +419,7 @@ removeTimeout = () =>{
 function mapStateToProps(state) {
   return {
     isFetching: state.vehicle.isFetching,
+    vehicle: state.vehicle.vehicle,
     message: state.vehicle.message,
     errorMessage: state.vehicle.errorMessage,
     errorMessageGPS: state.gps.errorMessage,

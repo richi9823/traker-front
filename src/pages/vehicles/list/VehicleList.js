@@ -59,10 +59,12 @@ class PostList extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     isFetching: PropTypes.bool,
+    vehicleList: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
     isFetching: false,
+    vehicleList: {items:[], total:0}
   };
 
   static meta = {
@@ -76,7 +78,6 @@ class PostList extends React.Component {
     this.state = {
       showDeleteModal:false,
       selectItem:null,
-      vehicles:[],
       queryParams: {
       },
       paginationOptions: options,
@@ -85,13 +86,13 @@ class PostList extends React.Component {
   }
 
   componentDidMount() {
-      this.props.dispatch(getAllVehicles(1,5, null)).then((response) => {
+      this.props.dispatch(getAllVehicles(1,5, null)).then(() => {
+        const {vehicleList} = this.props;
         this.setState((prev) => (
           {
-            vehicles: response.items,
             paginationOptions:{
             ...prev.paginationOptions,
-            totalSize: response.total
+            totalSize: vehicleList.total
           }
           }));
       });
@@ -102,13 +103,13 @@ class PostList extends React.Component {
       queryParams, paginationOptions
     } = this.state;
     if (!isEqual(prevQueryParams, queryParams)) {
-      this.props.dispatch(getAllVehicles(paginationOptions.page, paginationOptions.sizePerPage, null)).then((response) => {
+      this.props.dispatch(getAllVehicles(paginationOptions.page, paginationOptions.sizePerPage, null)).then(() => {
+        const {vehicleList} = this.props;
         this.setState((prev) => (
           {
-            vehicles: response.items,
             paginationOptions:{
             ...prev.paginationOptions,
-            totalSize: response.total
+            totalSize: vehicleList.total
           }
           }));
       });
@@ -159,14 +160,14 @@ class PostList extends React.Component {
   doRemove = () => {
     const { paginationOptions, deleteItem } = this.state;
     this.props.dispatch(removeVehicle(deleteItem.id)).then(()=>{
-      this.props.dispatch(getAllVehicles(paginationOptions.page, paginationOptions.sizePerPage, null)).then((response) => {
+      this.props.dispatch(getAllVehicles(paginationOptions.page, paginationOptions.sizePerPage, null)).then(() => {
+        const {vehicleList} = this.props;
         this.setState((prev) => (
           {
-            vehicles: response.items,
             showDeleteModal:false,
             paginationOptions:{
             ...prev.paginationOptions,
-            totalSize: response.total
+            totalSize: vehicleList.total
           }
           }));
       })
@@ -174,7 +175,8 @@ class PostList extends React.Component {
   }
 
   render() {
-    const { paginationOptions, deleteItem ,showDeleteModal, vehicles } = this.state;
+    const { vehicles } = this.props.vehicleList;
+    const { paginationOptions, deleteItem ,showDeleteModal } = this.state;
     return (
       <div className={s.root}>
         {showDeleteModal ? <DeleteModal isFetching={this.props.isFetching} onAccept={() => this.doRemove()} onCancel={()=> this.setState({deleteItem: null, showDeleteModal:false})} text={deleteItem.model}/> : null}
@@ -242,6 +244,7 @@ class PostList extends React.Component {
 function mapStateToProps(state) {
   return {
     isFetching: state.vehicle.isFetching,
+    vehicleList: state.vehicle.vehicleList,
   };
 }
 

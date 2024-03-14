@@ -12,7 +12,7 @@ export const GET_ALL_VEHICLES_SUCCESS = 'GET_ALL_VEHICLES_SUCCESS';
 export const ADD_GPS_SUCCESS = 'ADD_GPS_SUCCESS';
 export const SET_IMAGE_SUCCESS = 'SET_IMAGE_SUCCESS';
 export const DELETE_IMAGE_SUCCESS = 'SET_IMAGE_SUCCESS';
-
+export const EDIT_VEHICLE_RECORD = 'EDIT_VEHICLE_RECORD';
 
 const VehicleApi = new TrakerApi.VehicleControllerApi();
 
@@ -23,18 +23,20 @@ function requestVehicleInit() {
   };
 }
 
-function requestCreateVehicle() {
+function requestCreateVehicle(vehicle) {
   return {
     type: CREATE_VEHICLE_SUCCESS,
     isFetching: false,
-    message:"Vehiculo registrado"
+    message:"Vehiculo registrado",
+    vehicle,
   };
 }
 
-function requestGetVehicle() {
+function requestGetVehicle(vehicle) {
   return {
     type: CREATE_VEHICLE_SUCCESS,
     isFetching: false,
+    vehicle
   };
 }
 
@@ -45,18 +47,28 @@ function requestDeleteVehicle() {
   };
 }
 
-function requestEditVehicle() {
+function requestEditVehicle(vehicle) {
   return {
     type: EDIT_VEHICLE_SUCCESS,
     isFetching: false,
-    message:"Edicion completa"
+    message:"Edicion completa",
+    vehicle,
   };
 }
 
-function requestGetAllVehicles() {
+function editRecord(name, newValue) {
+  return {
+    type: EDIT_VEHICLE_RECORD,
+    name,
+    newValue
+  };
+}
+
+function requestGetAllVehicles(vehicleList) {
   return {
     type: GET_ALL_VEHICLES_SUCCESS,
     isFetching: false,
+    vehicleList,
   };
 }
 
@@ -99,10 +111,10 @@ export function addGpsDevice(vehicleId, gps) {
 
     dispatch(requestVehicleInit());
     return VehicleApi.addGPSDevice(vehicleId, gps)
-      .then((response) => {
+      .then(() => {
         // Dispatch the success action
         dispatch(requestAddGps());
-        return Promise.resolve(response);
+        return Promise.resolve();
       })
       .catch(err => {
         if(err.status === 401){
@@ -148,8 +160,8 @@ export function editVehicle(id, vehicle) {
     return VehicleApi.editVehicle(id, vehicle)
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestEditVehicle());
-        return Promise.resolve(response);
+        dispatch(requestEditVehicle(response));
+        return Promise.resolve();
       })
       .catch(err => {
         if(err.status === 401){
@@ -161,6 +173,12 @@ export function editVehicle(id, vehicle) {
         return Promise.reject(err)
       });
 
+  };
+}
+
+export function editVehicleRecord(name, newValue) {
+  return dispatch => {
+    dispatch(editRecord(name,newValue))
   };
 }
 
@@ -176,8 +194,8 @@ export function getAllVehicles(page, size, sort) {
     })
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestGetAllVehicles());
-        return Promise.resolve(response);
+        dispatch(requestGetAllVehicles(response));
+        return Promise.resolve();
       })
       .catch(err => {
         console.log(err)
@@ -201,8 +219,8 @@ export function getVehicle(id) {
     return VehicleApi.getVehicle(id)
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestGetVehicle());
-        return Promise.resolve(response);
+        dispatch(requestGetVehicle(response));
+        return Promise.resolve();
       })
       .catch(err => {
         if(err.status === 401){
@@ -224,8 +242,8 @@ export function createVehicle(vehicle) {
     return VehicleApi.registerVehicle(vehicle)
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestCreateVehicle());
-        return Promise.resolve(response);
+        dispatch(requestCreateVehicle(response));
+        return Promise.resolve();
       })
       .catch(err => {
         if(err.status === 401){
