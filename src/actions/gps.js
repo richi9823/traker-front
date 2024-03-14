@@ -8,7 +8,7 @@ export const GET_GPS_SUCCESS = 'GET_GPS_SUCCESS';
 export const EDIT_GPS_STATUS_SUCCESS = 'EDIT_GPS_STATUS_SUCCESS';
 export const DELETE_GPS_SUCCESS = 'DELETE_GPS_SUCCESS';
 export const GET_ALL_GPS_SUCCESS = 'GET_ALL_GPS_SUCCESS';
-
+export const CLEAN_ERROR_GPS= 'CLEAN_ERROR_GPS';
 
 const GpsApi = new TrakerApi.GpsDeviceControllerApi();
 
@@ -19,17 +19,19 @@ function requestGpsInit() {
   };
 }
 
-function requestGetGps() {
+function requestGetGps(device) {
   return {
     type: GET_GPS_SUCCESS,
     isFetching: false,
+    device,
   };
 }
 
-function requestEditGpsStatus() {
+function requestEditGpsStatus(device) {
   return {
     type: EDIT_GPS_STATUS_SUCCESS,
     isFetching: false,
+    device,
   };
 }
 
@@ -40,10 +42,11 @@ function requestDeleteGps() {
   };
 }
 
-function requestGetAllGps() {
+function requestGetAllGps(deviceList) {
   return {
     type: GET_ALL_GPS_SUCCESS,
     isFetching: false,
+    deviceList,
   };
 }
 
@@ -54,6 +57,20 @@ function requestGpsFailure(message) {
     errorMessage: message,
   };
 }
+
+function cleanErrorGPSAction() {
+  return {
+    type: CLEAN_ERROR_GPS,
+  };
+}
+
+
+export function cleanErrorGpsAction() {
+  return dispatch => {
+    dispatch(cleanErrorGPSAction())
+  };
+}
+
 
 
 export function deleteGps(gpsId) {
@@ -87,8 +104,8 @@ export function getGps(gpsId) {
     return GpsApi.getGPSDevice(gpsId)
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestGetGps());
-        return Promise.resolve(response);
+        dispatch(requestGetGps(response));
+        return Promise.resolve();
       })
       .catch(err => {
         if(err.status === 401){
@@ -111,8 +128,8 @@ export function getAllGps(vehicleId) {
     return GpsApi.getListGPS(vehicleId)
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestGetAllGps());
-        return Promise.resolve(response);
+        dispatch(requestGetAllGps(response));
+        return Promise.resolve();
       })
       .catch(err => {
         if(err.status === 401){
@@ -135,8 +152,8 @@ export function updateStatusGps(gpsId, status) {
     return GpsApi.updateStatusGPS(gpsId, status)
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestEditGpsStatus());
-        return Promise.resolve(response);
+        dispatch(requestEditGpsStatus(response));
+        return Promise.resolve();
       })
       .catch(err => {
         if(err.status === 401){

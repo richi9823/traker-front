@@ -18,17 +18,19 @@ function requestUserInit() {
   };
 }
 
-function requestGetUser() {
+function requestGetUser(user) {
   return {
     type: GET_USER_SUCCESS,
     isFetching: false,
+    user
   };
 }
 
-function requestEditUser() {
+function requestEditUser(user) {
   return {
     type: EDIT_USER_SUCCESS,
     isFetching: false,
+    user,
   };
 }
 
@@ -57,8 +59,8 @@ export function getUser() {
     return UserApi.getUserDetails()
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestGetUser());
-        return Promise.resolve(response);
+        dispatch(requestGetUser(response));
+        return Promise.resolve();
       })
       .catch(err => {
         if(err.status === 401){
@@ -80,8 +82,8 @@ export function editUser(user) {
     return UserApi.editUser(user)
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestEditUser());
-        return Promise.resolve(response);
+        dispatch(requestEditUser(response));
+        return Promise.resolve();
       })
       .catch(err => {
         if(err.status === 401){

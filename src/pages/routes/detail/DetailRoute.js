@@ -27,6 +27,8 @@ class DetailRoute extends Component {
     match: PropTypes.object.isRequired,
     message: PropTypes.string.isRequired,
     errorMessage: PropTypes.string.isRequired,
+    route: PropTypes.object.isRequired,
+    notificationList: PropTypes.object.isRequired
   };
   /* eslint-enable */
 
@@ -34,29 +36,23 @@ class DetailRoute extends Component {
     isFetching: false,
     message: null,
     errorMessage: null,
+    route:{},
+    notificationList:{items:[], total:0}
   };
 
   state = {
-    route: {},
-    showError: false,
     showDeleteModal:false,
-    notifications:{}
   };
 
   componentDidMount() {
-    this.props.dispatch(getRoute(this.props.match.params.routeId)).then((response)=>{
-      this.setState({route: response});  
-    }).catch((err) => {
-      this.setState({showError:true})
-    })
+    this.props.dispatch(getRoute(this.props.match.params.routeId))
   }
-
 doRemove = () => {
   this.props.dispatch(this.deleteRoute(this.props.match.params.routeId)).then(() =>{
     const { history } = this.props;
     history.push("/app/vehicles/" + this.props.match.params.id +"/routes");
   }).catch((err) =>{
-    this.setState({showError:true});
+    console.error(err)
   });
 }
 
@@ -67,7 +63,8 @@ openDeleteModal = () =>{
 
 
   render() {
-    const {showError, showDeleteModal, route} = this.state;
+    const{route} = this.props
+    const {showError, showDeleteModal} = this.state;
     return (
       <div className={s.root}>
         {showDeleteModal ? <DeleteModal isFetching={this.props.isFetching} onAccept={() => this.doRemove()} onCancel={()=> this.setState({showDeleteModal:false})} text={route.id}/> : null}
@@ -141,6 +138,8 @@ function mapStateToProps(state) {
     isFetching: state.route.isFetching,
     message: state.route.message,
     errorMessage: state.route.errorMessage,
+    route: state.route.route,
+    notificationList: state.notification.notificationList
   };
 }
 

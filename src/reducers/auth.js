@@ -1,6 +1,7 @@
 import {
   LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT_SUCCESS, SIGNUP_REQUEST, SIGNUP_SUCCESS, SIGNUP_FAILURE, SESSION
 } from '../actions/auth';
+import { EDIT_USER_SUCCESS } from '../actions/user';
 
 const token = localStorage.getItem('token');
 export default function auth(state = {
@@ -59,6 +60,13 @@ export default function auth(state = {
               errorMessage: action.message,
               message: ''
           });
+      case EDIT_USER_SUCCESS:
+        return Object.assign({}, state, {
+            isFetching: false,
+            errorMessage: action.message,
+            message: '',
+            user:action.user
+        });    
       default:
           return state;
   }

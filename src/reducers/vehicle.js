@@ -9,7 +9,8 @@ import {
   GET_ALL_VEHICLES_SUCCESS,
   GET_VEHICLE_SUCCESS,
   SET_IMAGE_SUCCESS,
-  EDIT_VEHICLE_RECORD
+  EDIT_VEHICLE_RECORD,
+  CLEAN_ERROR_VEHICLE
 } from '../actions/vehicle';
 
 export default function vehicle(
@@ -43,11 +44,11 @@ export default function vehicle(
         vehicle: action.vehicle,
       });
     case GET_ALL_VEHICLES_SUCCESS: 
-    return Object.assign({}, state, {
-      isFetching: action.isFetching,
-      message: action.message,
-      vehicleList: action.vehicleList,
-    });
+      return Object.assign({}, state, {
+        isFetching: action.isFetching,
+        message: action.message,
+        vehicleList: action.vehicleList,
+      });
     case EDIT_VEHICLE_RECORD: 
     return Object.assign({}, state, {
       vehicle: {
@@ -62,6 +63,10 @@ export default function vehicle(
       return Object.assign({}, state, {
         isFetching: action.isFetching,
         message: action.message,
+      });
+    case CLEAN_ERROR_VEHICLE:
+      return Object.assign({}, state, {
+        errorMessage:null,
       });
     default:
       return state;

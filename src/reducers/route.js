@@ -9,6 +9,10 @@ REQUEST_ROUTE_INIT
 export default function route(
   state = {
     isFetching: false,
+    message: null,
+    errorMessage: null,
+    route:{},
+    routeList:{items:[], total: 0},
   },
   action,
 ) {
@@ -25,7 +29,17 @@ export default function route(
         errorMessage:action.errorMessage
       });
     case GET_ROUTE_SUCCESS:
+      return Object.assign({}, state, {
+        isFetching: action.isFetching,
+        message: action.message,
+        route: action.route,
+      });
     case GET_ALL_ROUTES_SUCCESS:
+      return Object.assign({}, state, {
+        isFetching: action.isFetching,
+        message: action.message,
+        routeList: action.routeList,
+      });
     case DELETE_ROUTE_SUCCESS:
       return Object.assign({}, state, {
         isFetching: action.isFetching,

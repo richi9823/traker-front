@@ -18,24 +18,27 @@ function requestNotificationInit() {
   };
 }
 
-function requestGetNotification() {
+function requestGetNotification(notification) {
   return {
     type: GET_NOTIFICATION_SUCCESS,
     isFetching: false,
+    notification,
   };
 }
 
-function requestGetAllNotifications() {
+function requestGetAllNotifications(notificationList) {
   return {
     type: GET_ALL_NOTIFICATIONS_SUCCESS,
     isFetching: false,
+    notificationList,
   };
 }
 
-function requestReadNotificaiton() {
+function requestReadNotificaiton(notification) {
   return {
     type: READ_NOTIFICATION,
     isFetching: false,
+    notification
   };
 }
 
@@ -57,8 +60,8 @@ export function getNotification(notificationId) {
     return NotificationApi.getNotification(notificationId)
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestGetNotification());
-        return Promise.resolve(response);
+        dispatch(requestGetNotification(response));
+        return Promise.resolve();
       })
       .catch(err => {
         if(err.status === 401){
@@ -88,8 +91,8 @@ export function getAllNotifications(vehicleId, alertId, readed, page, size, sort
     return NotificationApi.getNotifications(opts)
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestGetAllNotifications());
-        return Promise.resolve(response);
+        dispatch(requestGetAllNotifications(response));
+        return Promise.resolve(response.total);
       })
       .catch(err => {
         if(err.status === 401){
@@ -111,8 +114,8 @@ export function readNotification(notificationId) {
     return NotificationApi.readNotification(notificationId)
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestReadNotificaiton());
-        return Promise.resolve(response);
+        dispatch(requestReadNotificaiton(response));
+        return Promise.resolve();
       })
       .catch(err => {
         if(err.status === 401){

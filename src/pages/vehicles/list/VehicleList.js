@@ -175,7 +175,7 @@ class PostList extends React.Component {
   }
 
   render() {
-    const { vehicles } = this.props.vehicleList;
+    const { items: vehicles } = this.props.vehicleList;
     const { paginationOptions, deleteItem ,showDeleteModal } = this.state;
     return (
       <div className={s.root}>

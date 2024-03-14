@@ -67,10 +67,14 @@ class RouteList extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     isFetching: PropTypes.bool,
+    errorMessage: PropTypes.string.isRequired,
+    routeList: PropTypes.object.isRequired
   };
 
   static defaultProps = {
     isFetching: false,
+    errorMessage: null,
+    routeList:{items:[], total:0}
   };
 
   static meta = {
@@ -84,7 +88,6 @@ class RouteList extends React.Component {
     this.state = {
       showDeleteModal:false,
       selectItem:null,
-      routes:[],
       queryParams: {
       },
       paginationOptions: options,
@@ -93,13 +96,13 @@ class RouteList extends React.Component {
   }
 
   componentDidMount() {
-      this.props.dispatch(getAllRoute(this.props.match.params.id, 1,5, null, null)).then((response) => {
+      this.props.dispatch(getAllRoute(this.props.match.params.id, 1,5, null, null)).then(() => {
+        const { routeList} = this.props
         this.setState((prev) => (
           {
-            routes: response.items,
             paginationOptions:{
             ...prev.paginationOptions,
-            totalSize: response.total
+            totalSize: routeList.total
           }
           }));
       });
@@ -111,12 +114,12 @@ class RouteList extends React.Component {
     } = this.state;
     if (!isEqual(prevQueryParams, queryParams)) {
       this.props.dispatch(getAllRoute(this.props.match.params.id, paginationOptions.page, paginationOptions.sizePerPage, null, null )).then((response) => {
+        const { routeList} = this.props
         this.setState((prev) => (
           {
-            routes: response.items,
             paginationOptions:{
             ...prev.paginationOptions,
-            totalSize: response.total
+            totalSize: routeList.total
           }
           }));
       });
@@ -169,13 +172,13 @@ class RouteList extends React.Component {
     const { paginationOptions, deleteItem } = this.state;
     this.props.dispatch(deleteRoute(deleteItem.id)).then(()=>{
       this.props.dispatch(getAllRoute(this.props.match.params.id, paginationOptions.page, paginationOptions.sizePerPage, null, null)).then((response) => {
+        const {routeList} = this.props;
         this.setState((prev) => (
           {
-            routes: response.items,
             showDeleteModal:false,
             paginationOptions:{
             ...prev.paginationOptions,
-            totalSize: response.total
+            totalSize: routeList.total
           }
           }));
       })
@@ -183,7 +186,8 @@ class RouteList extends React.Component {
   }
 
   render() {
-    const { paginationOptions, deleteItem ,showDeleteModal, routes } = this.state;
+    const { items: routes  } = this.props.routeList;
+    const { paginationOptions, deleteItem ,showDeleteModal } = this.state;
     return (
       <div className={s.root}>
         {showDeleteModal ? <DeleteModal isFetching={this.props.isFetching} onAccept={() => this.doRemove()} onCancel={()=> this.setState({deleteItem: null, showDeleteModal:false})} text={deleteItem.model}/> : null}
@@ -253,6 +257,8 @@ class RouteList extends React.Component {
 function mapStateToProps(state) {
   return {
     isFetching: state.route.isFetching,
+    errorMessage: state.route.errorMessage,
+    routeList: state.route.routeList,
   };
 }
 

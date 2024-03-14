@@ -18,17 +18,19 @@ function requestRouteInit() {
   };
 }
 
-function requestGetRoute() {
+function requestGetRoute(route) {
   return {
     type: GET_ROUTE_SUCCESS,
     isFetching: false,
+    route
   };
 }
 
-function requestGetAllRoutes() {
+function requestGetAllRoutes(routeList) {
   return {
     type: GET_ALL_ROUTES_SUCCESS,
     isFetching: false,
+    routeList,
   };
 }
 
@@ -63,8 +65,8 @@ export function getAllRoute(vehicleId, page, size, since, until) {
     return RouteApi.getVehicleRoutes(vehicleId, opts)
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestGetAllRoutes());
-        return Promise.resolve(response);
+        dispatch(requestGetAllRoutes(response));
+        return Promise.resolve(response.total);
       })
       .catch(err => {
         if(err.status === 401){
@@ -86,8 +88,8 @@ export function getRoute(routeId) {
     return RouteApi.getRoute(routeId)
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestGetRoute());
-        return Promise.resolve(response);
+        dispatch(requestGetRoute(response));
+        return Promise.resolve();
       })
       .catch(err => {
         if(err.status === 401){

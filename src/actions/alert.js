@@ -8,6 +8,7 @@ export const EDIT_ALERT_SUCCESS = 'EDIT_ALERT_SUCCESS';
 export const GET_ALERT_SUCCESS = 'GET_ALERT_SUCCESS';
 export const GET_ALL_ALERTS_SUCCESS = 'GET_ALL_ALERTS_SUCCESS';
 export const REQUEST_ALERTS_FAILURE = 'REQUEST_ALERTS_FAILURE';
+export const EDIT_RECORD_ALERT = 'EDIT_RECORD_ALERT'
 
 const AlertApi = new TrakerApi.AlertControllerApi();
 
@@ -18,18 +19,20 @@ function requestAlertInit() {
   };
 }
 
-function requestCreateAlert() {
+function requestCreateAlert(alert) {
   return {
     type: CREATE_ALERT_SUCCESS,
     isFetching: false,
-    message:"Alerta registrada"
+    message:"Alerta registrada",
+    alert
   };
 }
 
-function requestGetAlert(data) {
+function requestGetAlert(alert) {
   return {
     type: GET_ALERT_SUCCESS,
     isFetching: false,
+    alert
   };
 }
 
@@ -40,18 +43,29 @@ function requestDeleteAlert() {
   };
 }
 
-function requestEditAlert() {
+function requestEditAlert(alert) {
   return {
     type: EDIT_ALERT_SUCCESS,
     isFetching: false,
-    message:"Edicion completa"
+    message:"Edicion completa",
+    alert
   };
 }
 
-function requestGetAllAlerts() {
+function editRecordAlertAction(name, newValue) {
+  return {
+    type: EDIT_RECORD_ALERT,
+    name,
+    newValue
+  };
+}
+
+
+function requestGetAllAlerts(alertList) {
   return {
     type: GET_ALL_ALERTS_SUCCESS,
     isFetching: false,
+    alertList,
   };
 }
 
@@ -63,6 +77,12 @@ function requestAlertFailure(message) {
   };
 }
 
+export function editRecordAlert(name, newValue) {
+  return dispatch => {
+    dispatch(editRecordAlertAction(name,newValue))
+  };
+}
+
 export function getAlert(id) {
 
   return dispatch => {
@@ -71,8 +91,8 @@ export function getAlert(id) {
     return AlertApi.getAlert(id)
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestGetAlert());
-        return Promise.resolve(response);
+        dispatch(requestGetAlert(response));
+        return Promise.resolve();
       })
       .catch(err => {
         if(err.status === 401){
@@ -94,8 +114,8 @@ export function createAlert(alert) {
     return AlertApi.createAlert(alert)
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestCreateAlert());
-        return Promise.resolve(response);
+        dispatch(requestCreateAlert(response));
+        return Promise.resolve();
       })
       .catch(err => {
         if(err.status === 401){
@@ -118,8 +138,8 @@ export function editAlert(id, alert) {
     return AlertApi.editAlert(id, alert)
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestEditAlert());
-        return Promise.resolve(response);
+        dispatch(requestEditAlert(response));
+        return Promise.resolve();
       })
       .catch(err => {
         if(err.status === 401){
@@ -147,8 +167,8 @@ export function getAllAlerts(vehicleId, page, size, sort) {
     })
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestGetAllAlerts());
-        return Promise.resolve(response);
+        dispatch(requestGetAllAlerts(response));
+        return Promise.resolve(response.total);
       })
       .catch(err => {
         console.log(err)

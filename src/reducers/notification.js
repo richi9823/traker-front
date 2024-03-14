@@ -9,6 +9,10 @@ import {
 export default function notification(
   state = {
     isFetching: false,
+    message: null,
+    errorMessage: null,
+    notification:{},
+    notificationList:{items:[], total: 0},
   },
   action,
 ) {
@@ -26,10 +30,16 @@ export default function notification(
       });
     case READ_NOTIFICATION:
     case GET_NOTIFICATION_SUCCESS:
+      return Object.assign({}, state, {
+        isFetching: action.isFetching,
+        message: action.message,
+        notification: action.notification,
+      });
     case GET_ALL_NOTIFICATIONS_SUCCESS:
       return Object.assign({}, state, {
         isFetching: action.isFetching,
         message: action.message,
+        notificationList: action.notification,
       });
     default:
       return state;

@@ -13,6 +13,7 @@ export const ADD_GPS_SUCCESS = 'ADD_GPS_SUCCESS';
 export const SET_IMAGE_SUCCESS = 'SET_IMAGE_SUCCESS';
 export const DELETE_IMAGE_SUCCESS = 'SET_IMAGE_SUCCESS';
 export const EDIT_VEHICLE_RECORD = 'EDIT_VEHICLE_RECORD';
+export const CLEAN_ERROR_VEHICLE = 'CLEAN_ERROR_VEHICLE';
 
 const VehicleApi = new TrakerApi.VehicleControllerApi();
 
@@ -63,6 +64,15 @@ function editRecord(name, newValue) {
     newValue
   };
 }
+
+function cleanErrorVehicleAction() {
+  return {
+    type: CLEAN_ERROR_VEHICLE,
+  };
+}
+
+
+
 
 function requestGetAllVehicles(vehicleList) {
   return {
@@ -175,6 +185,13 @@ export function editVehicle(id, vehicle) {
 
   };
 }
+
+export function cleanErrorVehicle() {
+  return dispatch => {
+    dispatch(cleanErrorVehicleAction())
+  };
+}
+
 
 export function editVehicleRecord(name, newValue) {
   return dispatch => {

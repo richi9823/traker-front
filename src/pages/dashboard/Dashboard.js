@@ -27,6 +27,8 @@ import { getAlertType } from '../../enum/alertType';
 class Dashboard extends Component {
   /* eslint-disable */
   static propTypes = {
+    alertList: PropTypes.object.isRequired,
+    notificationList: PropTypes.object.isRequired,
     vehicleList: PropTypes.object.isRequired,
     isFetchingVehicles: PropTypes.bool,
     isFetchingNotifications: PropTypes.bool,
@@ -39,6 +41,8 @@ class Dashboard extends Component {
     isFetchingVehicles: false,
     errorMessageVehicles: null,
     vehicleList: {items:[], total: 0},
+    notificationList: {items:[], total: 0},
+    alertList: {items:[], total: 0},
     isFetchingNotifications: false,
     isFetchingAlerts: false,
     errorMessageNotification: null,
@@ -46,23 +50,12 @@ class Dashboard extends Component {
   };
 
   state = {
-    alerts:{items:[], total: 0},
-    notifications:{items:[], total: 0},
-    showVehicleError: false
   };
 
   componentDidMount() {
-      this.props.dispatch(getAllVehicles(1,5, null)).then((res) =>{
-        this.setState({showVehicleError:false})
-      }).catch(()=>{
-        this.setState({showVehicleError:true})
-      });
-      this.props.dispatch(getAllAlerts(null, 0,5, null)).then((res) =>{
-        this.setState({alerts: res})
-      });
-      this.props.dispatch(getAllNotifications(null, null, false, 1,5, null)).then((res) =>{
-        this.setState({notifications: res})
-      });
+      this.props.dispatch(getAllVehicles(1,5, null))
+      this.props.dispatch(getAllAlerts(null, 0,5, null))
+      this.props.dispatch(getAllNotifications(null, null, false, 1,5, null))
   }
 
   onRegister = () => {
@@ -70,17 +63,11 @@ class Dashboard extends Component {
   }
 
   onToggled = (value, id) => {
-    const {alerts} = this.state;
-    this.props.dispatch(editAlert(id, {silenced:value})).then((res) =>{
-      var objIndex = alerts.items.findIndex(obj => obj.id === id)
-      alerts.items[objIndex].silenced = res.silenced
-      this.setState({alerts: alerts})
-    });
+    this.props.dispatch(editAlert(id, {silenced:value}));
   }
 
   render() {
-    const {vehicleList} = this.props;
-    const {vehicles, alerts, notifications, showVehicleError} = this.state
+    const {vehicleList, alertList, notificationList} = this.props;
     return (
       <div className={s.root}>
         <Breadcrumb>
@@ -102,7 +89,7 @@ class Dashboard extends Component {
                 </div>
               }
             >
-              {this.props.errorMessageVehicles && showVehicleError &&(
+              {this.props.errorMessageVehicles &&(
                   <Alert className="alert-sm" bsstyle="danger">
                     {this.props.errorMessageVehicles}
                   </Alert>
@@ -168,9 +155,9 @@ class Dashboard extends Component {
                   </tr>
                 </thead>
                 <tbody>
-                {alerts?.items &&
-                alerts?.items.length > 0 &&
-                alerts?.items.map(a => (
+                {alertList?.items &&
+                alertList?.items.length > 0 &&
+                alertList?.items.map(a => (
                  <tr key={a.id}>
                   <td>{a.name}</td>
                   <td>{getAlertType(a.type)}</td>
@@ -184,7 +171,7 @@ class Dashboard extends Component {
                     <td colSpan="100">Cargando...</td>
                   </tr>
                 )}
-                {alerts?.total === 0 && !this.props.isFetchingAlerts && 
+                {alertList?.total === 0 && !this.props.isFetchingAlerts && 
                   <tr>
                     <td colSpan="100">No hay registros...</td>
                   </tr> 
@@ -200,9 +187,9 @@ class Dashboard extends Component {
                     {this.props.errorMessageNotification}
                   </Alert>
                 )}
-                {notifications?.items &&
-                notifications?.items.length > 0 &&
-                notifications?.items.map(n => (
+                {notificationList?.items &&
+                notificationList?.items.length > 0 &&
+                notificationList?.items.map(n => (
                   <Alert
                   className="alert-sm clearfix"
                   color="warning"
@@ -225,7 +212,7 @@ class Dashboard extends Component {
                     <td colSpan="100">Cargando...</td>
                   </tr>
                 )}
-                {notifications?.total === 0 && !this.props.isFetchingNotifications && 
+                {notificationList?.total === 0 && !this.props.isFetchingNotifications && 
                   <tr>
                     <td colSpan="100">No hay registros...</td>
                   </tr> 
@@ -242,10 +229,12 @@ class Dashboard extends Component {
 function mapStateToProps(state) {
   return {
     isFetchingVehicles: state.vehicle.isFetching,
-    errorMessageVehicles: state.vehicle.errorMessage,
-    vehicleList: state.vehicle.vehicleList,
     isFetchingNotifications: state.notification.isFetching,
     isFetchingAlerts: state.alert.isFetching,
+    vehicleList: state.vehicle.vehicleList,
+    notificationList: state.notification.notificationList,
+    alertList: state.alert.alertList,
+    errorMessageVehicles: state.vehicle.errorMessage,
     errorMessageNotification: state.notification.errorMessage,
     errorMessageAlert: state.alert.errorMessage,
   };

@@ -8,10 +8,10 @@ export const GET_POSITION_SUCCESS = 'GET_POSITION_SUCCESS';
 const PositionApi = new TrakerApi.PositionsControllerApi();
 
 
-function requestGetPosition() {
+function requestGetPosition(position) {
   return {
     type: GET_POSITION_SUCCESS,
-
+    position
   };
 }
 
@@ -23,8 +23,8 @@ export function getPosition(vehicleId) {
     return PositionApi.getLastPosition(vehicleId)
       .then((response) => {
         // Dispatch the success action
-        dispatch(requestGetPosition());
-        return Promise.resolve(response);
+        dispatch(requestGetPosition(response));
+        return Promise.resolve();
       })
       .catch(err => {
         if(err.status === 401){

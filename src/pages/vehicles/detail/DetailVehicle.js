@@ -27,7 +27,7 @@ import {
 } from 'reactstrap';
 import s from './DetailVehicle.module.scss';
 import Widget from '../../../components/Widget/Widget';
-import { addGpsDevice, editVehicle, editVehicleRecord, getVehicle } from '../../../actions/vehicle';
+import { addGpsDevice, cleanErrorVehicle, editVehicle, editVehicleRecord, getVehicle } from '../../../actions/vehicle';
 import Maps from '../../google/Google';
 import { getAllAlerts } from '../../../actions/alert';
 import { getAllNotifications } from '../../../actions/notification';
@@ -51,7 +51,11 @@ class DetailVehicle extends Component {
     errorMessage: PropTypes.string.isRequired,
     errorMessageGPS: PropTypes.string.isRequired,
     isFetchingGPS: PropTypes.bool,
-    vehicle: PropTypes.object.isRequired
+    vehicle: PropTypes.object.isRequired,
+    position: PropTypes.object.isRequired,
+    alertList: PropTypes.object.isRequired,
+    routeList: PropTypes.object.isRequired,
+    notificationList: PropTypes.object.isRequired
   };
   /* eslint-enable */
 
@@ -60,20 +64,18 @@ class DetailVehicle extends Component {
     message: null,
     errorMessage: null,
     vehicle:{},
-  };
-
-  state = {
-    notifications:{},
-    alerts:{},
-    routes:{},
     position:{
       latitude:0,
       longitude:0
     },
-    showError: false,
+    alertList:{items:[], total:0},
+    notificationList:{items:[], total:0},
+    routeList:{items:[], total:0}
+  };
+
+  state = {
     showSuccess: false,
     online: false,
-    showErrorGPS:false,
     showErrorGPSModal:false,
     modalGPS:false,
     interval: null,
@@ -96,79 +98,53 @@ class DetailVehicle extends Component {
         editVehicle(this.props.match.params.id, vehicle),
       )
       .then(() => {
+        this.props.dispatch(cleanErrorVehicle())
         this.setState({
-          showError: false,
           showSuccess: true,
         });
       }
       ).catch(() =>{
-        this.setState({showError:true ,showSuccess:false})
+        this.setState({showSuccess:false})
       })
     e.preventDefault();
   }
 
   componentDidMount() {
     this.props.dispatch(getVehicle(this.props.match.params.id)).then(()=>{
-      this.props.dispatch(getPosition(this.props.match.params.id)).then((re)=>{
-        this.setState({position: re});
-        if((moment(re.gps.last_updated).isBefore(moment().subtract(3,'minutes')))){
+      this.props.dispatch(getPosition(this.props.match.params.id)).then(()=>{
+        const { position} = this.props;
+        if((moment(position.gps.last_updated).isBefore(moment().subtract(3,'minutes')))){
           this.setState({online:false, interval:setInterval(this.buclePositions,15000) })
         }else{
           this.setState({online:true, interval: setInterval(this.buclePositions,3000)})
         }
       }).catch((err) => {
         console.warn(err)
-      })
-      
+      })  
     }).catch((err) => {
-      this.setState({showError:true})
+      console.error(err)
     })
 
-    this.props.dispatch(getAllAlerts(this.props.match.params.id, null, null, null)).then((response)=>{
-      this.setState({alerts: response});
-    }).catch((err) => {
-      this.setState({showError:true})
-    })
-
-    this.props.dispatch(getAllNotifications(this.props.match.params.id, null, false, null, null, null)).then((response)=>{
-      this.setState({notifications: response});
-    }).catch((err) => {
-      this.setState({showError:true})
-    })
-
-    this.props.dispatch(getAllRoute(this.props.match.params.id, 1, null, null, null)).then((response)=>{
-      this.setState({routes: response});
-    }).catch((err) => {
-      this.setState({showError:true})
-    })
+    this.props.dispatch(getAllAlerts(this.props.match.params.id, null, null, null))
+    this.props.dispatch(getAllNotifications(this.props.match.params.id, null, false, null, null, null))
+    this.props.dispatch(getAllRoute(this.props.match.params.id, 1, null, null, null))
 
     
   }
 
   buclePositions = () =>{
-   this.props.dispatch(getPosition(this.props.match.params.id)).then((response)=>{
-     this.setState({position: response});
-   }).catch((err) => {
-     console.warn(err)
-   })
+   this.props.dispatch(getPosition(this.props.match.params.id))
   }
 
-
 onToggled = (value, id) => {
-  this.props.dispatch(updateStatusGps(id, value ? 'ACTIVE' : 'INACTIVE')).then((res) =>{
-    this.props.dispatch(getVehicle(this.props.match.params.id)).then(()=>{
-    }).catch((err) => {
-      this.setState({showError:true})
-    })
+  this.props.dispatch(updateStatusGps(id, value ? 'ACTIVE' : 'INACTIVE')).then(() =>{
+    this.props.dispatch(getVehicle(this.props.match.params.id))
   });
 }
 
 deleteGps = (id) => {
   this.props.dispatch(deleteGps(id)).then(() =>{
-    this.props.dispatch(getVehicle(this.props.match.params.id)).then(()=>{
-    }).catch((err) => {
-      this.setState({showErrorGPS:true})
-    })
+    this.props.dispatch(getVehicle(this.props.match.params.id))
   });
 }
 
@@ -181,7 +157,7 @@ addGPS=(value)=>{
     this.props.dispatch(getVehicle(this.props.match.params.id)).then(()=>{
       this.setState({showErrorGPSModal: false, modalGPS:false});
     }).catch((err) => {
-      this.setState({showError:true})
+      console.error(err)
     })
   }).catch((err) => {
     this.setState({showErrorGPSModal:true})
@@ -195,8 +171,8 @@ removeTimeout = () =>{
 
 
   render() {
-    const {vehicle} = this.props
-    const {position, showError, showErrorGPS, showErrorGPSModal, showSuccess, notifications, routes, alerts, online, modalGPS} = this.state;
+    const {vehicle, position, notificationList, alertList, routeList} = this.props
+    const {showErrorGPS, showErrorGPSModal, showSuccess, online, modalGPS} = this.state;
     return (
       <div className={s.root}>
         {modalGPS ? <AddGPSModal isFetching={this.props.isFetching} errorMessage={this.props.errorMessage} showErrorGPSModal={showErrorGPSModal} addGPS={this.addGPS} onCancel={()=> this.setState({modalGPS:false})} text={"Nuevo dispositivo"}/> : null}
@@ -206,7 +182,7 @@ removeTimeout = () =>{
           <BreadcrumbItem active>{vehicle?.id}</BreadcrumbItem>
         </Breadcrumb>
         <h1 className="mb-lg">Detalle del vehiculo</h1>
-          {this.props.errorMessage && showError &&(
+          {this.props.errorMessage &&(
                   <Alert className="alert-sm alert-danger" bsstyle="danger">
                     {this.props.errorMessage}
                   </Alert>
@@ -295,15 +271,15 @@ removeTimeout = () =>{
             <ListGroup>
               <Link onClick={()=> this.removeTimeout()} to={"/app/vehicles/" + vehicle.id + "/routes"} className="list-group-item">
                 <i className="fa fa-phone mr-xs text-secondary" />{' '}
-                Trayectorias <Badge className="ml-xs" color="danger">{routes.total}</Badge>
+                Trayectorias <Badge className="ml-xs" color="danger">{routeList.total}</Badge>
               </Link>
               <Link to="/app" className="list-group-item">
                 <i className="fa fa-bell-o mr-xs text-secondary" />{' '}
-                Notificaciones <Badge className="ml-xs" color="warning">{notifications.total}</Badge>
+                Notificaciones <Badge className="ml-xs" color="warning">{notificationList.total}</Badge>
               </Link>
               <Link to="/app" className="list-group-item">
                 <i className="fa fa-comment-o mr-xs text-secondary" />{' '}
-                Alertas <Badge className="ml-xs" color="success">{alerts.total}</Badge>
+                Alertas <Badge className="ml-xs" color="success">{alertList.total}</Badge>
               </Link>
             </ListGroup>
           </Col>
@@ -349,7 +325,7 @@ removeTimeout = () =>{
                 </div>
               }
             >
-              {this.props.errorMessageGPS && showErrorGPS && (
+              {this.props.errorMessageGPS && (
                   <Alert className="alert-sm" bsstyle="danger">
                     {this.props.errorMessageGPS}
                   </Alert>
@@ -401,7 +377,7 @@ removeTimeout = () =>{
                     <td colSpan="100">Cargando...</td>
                   </tr>
                 )}
-                {alerts?.total === 0 && !this.props.isFetchingAlerts && 
+                {alertList?.total === 0 && !this.props.isFetchingAlerts && 
                   <tr>
                     <td colSpan="100">No hay registros...</td>
                   </tr> 
@@ -423,7 +399,11 @@ function mapStateToProps(state) {
     message: state.vehicle.message,
     errorMessage: state.vehicle.errorMessage,
     errorMessageGPS: state.gps.errorMessage,
-    isFetchingGPS: state.gps.isFetching
+    isFetchingGPS: state.gps.isFetching,
+    notificationList: state.notification.notificationList,
+    routeList: state.route.routeList,
+    alertList: state.alert.alertList,
+    position: state.position.position
   };
 }
 
