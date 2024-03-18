@@ -10,13 +10,21 @@ import {
   BreadcrumbItem,
   FormGroup,
   Label,
+  Input,
+  ListGroup,
+  Badge,
+  ButtonGroup,
+  Button,
 } from 'reactstrap';
 import s from './DetailRoute.module.scss';
 import Widget from '../../../components/Widget/Widget';
 import Maps from '../../google/Google';
 import moment from 'moment';
 import DeleteModal from '../../../components/Modals/DeleteModal';
-import { getRoute } from '../../../actions/route';
+import { deleteRoute, getRoute } from '../../../actions/route';
+import { getVehicle } from '../../../actions/vehicle';
+import { Link } from 'react-router-dom/cjs/react-router-dom.min';
+import { closeDeleteModal, openDeleteModal } from '../../../actions/navigation';
 
 
 class DetailRoute extends Component {
@@ -28,6 +36,7 @@ class DetailRoute extends Component {
     message: PropTypes.string.isRequired,
     errorMessage: PropTypes.string.isRequired,
     route: PropTypes.object.isRequired,
+    vehicle: PropTypes.object.isRequired,
     notificationList: PropTypes.object.isRequired
   };
   /* eslint-enable */
@@ -37,18 +46,21 @@ class DetailRoute extends Component {
     message: null,
     errorMessage: null,
     route:{},
-    notificationList:{items:[], total:0}
+    vehicle:{},
+    notificationList:{items:[], total:0},
+    deleteModalOpened:false
   };
 
   state = {
-    showDeleteModal:false,
   };
 
   componentDidMount() {
     this.props.dispatch(getRoute(this.props.match.params.routeId))
+    this.props.dispatch(getVehicle(this.props.match.params.id))
   }
 doRemove = () => {
-  this.props.dispatch(this.deleteRoute(this.props.match.params.routeId)).then(() =>{
+  this.props.dispatch(deleteRoute(this.props.match.params.routeId)).then(() =>{
+    this.props.dispatch(closeDeleteModal())
     const { history } = this.props;
     history.push("/app/vehicles/" + this.props.match.params.id +"/routes");
   }).catch((err) =>{
@@ -57,17 +69,16 @@ doRemove = () => {
 }
 
 openDeleteModal = () =>{
-  this.setState({showDeleteModal:true})
+  this.props.dispatch(openDeleteModal())
 }
 
 
 
   render() {
-    const{route} = this.props
-    const {showError, showDeleteModal} = this.state;
+    const{route, deleteModalOpened, vehicle, notificationList} = this.props
     return (
       <div className={s.root}>
-        {showDeleteModal ? <DeleteModal isFetching={this.props.isFetching} onAccept={() => this.doRemove()} onCancel={()=> this.setState({showDeleteModal:false})} text={route.id}/> : null}
+        {deleteModalOpened ? <DeleteModal isFetching={this.props.isFetching} onAccept={() => this.doRemove()} text={route.id}/> : null}
         <Breadcrumb>
           <BreadcrumbItem>YOU ARE HERE</BreadcrumbItem>
           <BreadcrumbItem>Vehiculos</BreadcrumbItem>
@@ -76,7 +87,7 @@ openDeleteModal = () =>{
           <BreadcrumbItem active>{this.props.match.params.routeId}</BreadcrumbItem>
         </Breadcrumb>
         <h1 className="mb-lg">Detalle de la ruta</h1>
-          {this.props.errorMessage && showError &&(
+          {this.props.errorMessage &&(
                   <Alert className="alert-sm alert-danger" bsstyle="danger">
                     {this.props.errorMessage}
                   </Alert>
@@ -109,23 +120,63 @@ openDeleteModal = () =>{
             >
               <FormGroup>
               <Label className="mr-2">Inicio:</Label>
-                <span>
-                    <span className="fw-semi-bold"> {moment(route.init).format("DD-MM-YYYY HH:mm")}</span>
-                </span>
+              <Input
+                    id="input-title"
+                    type="text"
+                    disabled
+                    value={moment(route.init).format("DD-MM-YYYY HH:mm")}
+                  />
               </FormGroup>
               <FormGroup>
               <Label className="mr-2">Fin:</Label>
-                <span>
-                    <span className="fw-semi-bold">{ moment(route.finish).format("DD-MM-YYYY HH:mm")}</span>
-                </span>
+              <Input
+                    id="input-title"
+                    type="text"
+                    value={moment(route.finish).format("DD-MM-YYYY HH:mm")}
+                    disabled
+                  />
               </FormGroup>
               <FormGroup>
               <Label className="mr-2">Distancia total:</Label>
-                <span>
-                    <span className="fw-semi-bold">{ route.total_distance != null ? route?.total_distance.toFixed(2) : '-' } Km</span>
-                </span>
+              <Input
+                    id="input-title"
+                    type="text"
+                    value={(route.total_distance != null ? route?.total_distance.toFixed(2) : '-') + "Km"}
+                    disabled
+                  />
+              </FormGroup>
+              <FormGroup>
+              <Label className="mr-2">Dispositivo GPS:</Label>
+              <Input
+                    id="input-title"
+                    type="text"
+                    value={route.gps?.name}
+                    disabled
+                  />
+              </FormGroup>
+              <FormGroup>
+              <Label className="mr-2">Vehiculo:</Label>
+              <Input
+                    id="input-title"
+                    type="text"
+                    value={vehicle.model + " " + vehicle.license}
+                    disabled
+                  />
               </FormGroup>
             </Widget>
+            <ListGroup>
+              <Link to="/app" className="list-group-item">
+                <i className="fa fa-bell-o mr-xs text-secondary" />{' '}
+                Notificaciones <Badge className="ml-xs" color="warning">{notificationList.total}</Badge>
+              </Link>
+            </ListGroup>
+            <div className="d-flex justify-content-end mt-5">
+                  <ButtonGroup>
+                    <Button color="danger" onClick={()=>this.openDeleteModal()}>
+                      {'Eliminar'}
+                    </Button>
+                  </ButtonGroup>
+                </div>
           </Col>
         </Row>
       </div>
@@ -139,7 +190,9 @@ function mapStateToProps(state) {
     message: state.route.message,
     errorMessage: state.route.errorMessage,
     route: state.route.route,
-    notificationList: state.notification.notificationList
+    vehicle: state.vehicle.vehicle,
+    notificationList: state.notification.notificationList,
+    deleteModalOpened: state.navigation.deleteModalOpened,
   };
 }
 

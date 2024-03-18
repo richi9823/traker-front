@@ -1,9 +1,11 @@
 import {
   CLEAN_ERROR_GPS,
+  CLOSE_MODAL_GPS,
   DELETE_GPS_SUCCESS,
   EDIT_GPS_STATUS_SUCCESS,
   GET_ALL_GPS_SUCCESS,
   GET_GPS_SUCCESS,
+  OPEN_MODAL_GPS,
   REQUEST_GPS_FAILURE,
   REQUEST_GPS_INIT
 } from '../actions/gps';
@@ -15,6 +17,7 @@ export default function gps(
     errorMessage: null,
     device:{},
     deviceList:[],
+    modalGpsOpened:false,
   },
   action,
 ) {
@@ -48,10 +51,18 @@ export default function gps(
         isFetching: action.isFetching,
         message: action.message,
       });
-      case CLEAN_ERROR_GPS:
+    case CLEAN_ERROR_GPS:
+      return Object.assign({}, state, {
+        errorMessage:null,
+      });
+    case OPEN_MODAL_GPS:
+      return Object.assign({}, state, {
+        modalGpsOpened:true,
+      });
+    case CLOSE_MODAL_GPS:
         return Object.assign({}, state, {
-          errorMessage:null,
-        });
+          modalGpsOpened:false,
+    });
     default:
       return state;
   }

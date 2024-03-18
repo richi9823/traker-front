@@ -18,6 +18,7 @@ import { columnFormatter } from './columnFormatter';
 import DeleteModal from '../../../components/Modals/DeleteModal';
 import moment from 'moment';
 import { deleteRoute, getAllRoute } from '../../../actions/route';
+import { closeDeleteModal, openDeleteModal } from '../../../actions/navigation';
 
 const columns = ({ handleAction }) => [
   {
@@ -68,13 +69,15 @@ class RouteList extends React.Component {
     dispatch: PropTypes.func.isRequired,
     isFetching: PropTypes.bool,
     errorMessage: PropTypes.string.isRequired,
-    routeList: PropTypes.object.isRequired
+    routeList: PropTypes.object.isRequired,
+    deleteModalOpened: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
     isFetching: false,
     errorMessage: null,
-    routeList:{items:[], total:0}
+    routeList:{items:[], total:0},
+    deleteModalOpened: false,
   };
 
   static meta = {
@@ -86,7 +89,6 @@ class RouteList extends React.Component {
     super(props);
 
     this.state = {
-      showDeleteModal:false,
       selectItem:null,
       queryParams: {
       },
@@ -130,7 +132,8 @@ class RouteList extends React.Component {
     const{id} = this.props.match.params
     switch(type){
       case 'delete':{
-        this.setState({showDeleteModal: true, deleteItem:data})
+        this.props.dispatch(openDeleteModal())
+        this.setState({deleteItem:data})
         break;
       }
       case 'view':{
@@ -175,22 +178,23 @@ class RouteList extends React.Component {
         const {routeList} = this.props;
         this.setState((prev) => (
           {
-            showDeleteModal:false,
             paginationOptions:{
             ...prev.paginationOptions,
             totalSize: routeList.total
           }
           }));
+          this.props.dispatch(closeDeleteModal())
       })
     })
   }
 
   render() {
+    const {deleteModalOpened} = this.props;
     const { items: routes  } = this.props.routeList;
-    const { paginationOptions, deleteItem ,showDeleteModal } = this.state;
+    const { paginationOptions, deleteItem } = this.state;
     return (
       <div className={s.root}>
-        {showDeleteModal ? <DeleteModal isFetching={this.props.isFetching} onAccept={() => this.doRemove()} onCancel={()=> this.setState({deleteItem: null, showDeleteModal:false})} text={deleteItem.model}/> : null}
+        {deleteModalOpened ? <DeleteModal isFetching={this.props.isFetching} onAccept={() => this.doRemove()} text={deleteItem?.model}/> : null}
         <Breadcrumb>
         <BreadcrumbItem>YOU ARE HERE</BreadcrumbItem>
           <BreadcrumbItem>Vehiculos</BreadcrumbItem>
@@ -259,6 +263,7 @@ function mapStateToProps(state) {
     isFetching: state.route.isFetching,
     errorMessage: state.route.errorMessage,
     routeList: state.route.routeList,
+    deleteModalOpened: state.navigation.deleteModalOpened,
   };
 }
 

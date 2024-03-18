@@ -18,6 +18,7 @@ import { getAllAlerts, removeAlert } from '../../../actions/alert';
 import { options } from '../../../constants/pagination';
 import { columnFormatter } from './columnFormatter';
 import DeleteModal from '../../../components/Modals/DeleteModal';
+import { closeDeleteModal, openDeleteModal } from '../../../actions/navigation';
 
 const columns = ({ handleAction }) => [
   {
@@ -58,18 +59,20 @@ const columns = ({ handleAction }) => [
 class AlertList extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
-    vehicles: PropTypes.array, // eslint-disable-line
+    AlertList: PropTypes.array, // eslint-disable-line
     isFetching: PropTypes.bool,
+    deleteModalOpened: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
     isFetching: false,
-    vehicles: [],
+    AlertList: {items:[], total:0},
+    deleteModalOpened: false,
   };
 
   static meta = {
-    title: 'Lista de vehiculos',
-    description: 'Aqui puede gestionar sus vehiculos',
+    title: 'Lista de alertas',
+    description: 'Aqui puede gestionar sus alertas',
   };
 
   constructor(props) {
@@ -86,13 +89,13 @@ class AlertList extends React.Component {
   }
 
   componentDidMount() {
-      this.props.dispatch(getAllAlerts(null, 1, 5, null)).then((response) => {
-        console.log(response)
+      this.props.dispatch(getAllAlerts(null, 1, 5, null)).then(() => {
+        const {alertList} = this.props;
         this.setState((prev) => (
           {
             paginationOptions:{
             ...prev.paginationOptions,
-            totalSize: response.total
+            totalSize: alertList.total
           }
           }));
       });
@@ -104,11 +107,12 @@ class AlertList extends React.Component {
     } = this.state;
     if (!isEqual(prevQueryParams, queryParams)) {
       this.props.dispatch(getAllAlerts(null, paginationOptions.page, paginationOptions.sizePerPage, null)).then((response) => {
+        const {alertList} = this.props;
         this.setState((prev) => (
           {
             paginationOptions:{
             ...prev.paginationOptions,
-            totalSize: response.total
+            totalSize: alertList.total
           }
           }));
       });
@@ -118,12 +122,13 @@ class AlertList extends React.Component {
   handleAction = (type, data) =>{
     switch(type){
       case 'delete':{
-        this.setState({showDeleteModal: true, deleteItem:data})
+        this.props.dispatch(openDeleteModal())
+        this.setState({deleteItem:data})
         break;
       }
       case 'view':{
         const { history } = this.props;
-        history.push("/app/vehicles/" + data.id);
+        history.push("/app/alerts/" + data.id);
         break;
       }
       default:
@@ -162,27 +167,28 @@ class AlertList extends React.Component {
       this.props.dispatch(getAllAlerts(null, paginationOptions.page, paginationOptions.sizePerPage, null)).then((response) => {
         this.setState((prev) => (
           {
-            showDeleteModal:false,
             paginationOptions:{
             ...prev.paginationOptions,
             totalSize: response.total
           }
           }));
+          this.props.dispatch(closeDeleteModal())
       })
     })
   }
 
   render() {
-    const { paginationOptions, deleteItem ,showDeleteModal } = this.state;
-    console.log(paginationOptions)
+    const { deleteModalOpened } = this.props;
+    const { items: alerts} = this.props.alertList
+    const { paginationOptions, deleteItem } = this.state;
     return (
       <div className={s.root}>
-        {showDeleteModal ? <DeleteModal isFetching={this.props.isFetching} onAccept={() => this.doRemove()} onCancel={()=> this.setState({deleteItem: null, showDeleteModal:false})} text={deleteItem.model}/> : null}
+        {deleteModalOpened ? <DeleteModal isFetching={this.props.isFetching} onAccept={() => this.doRemove()} text={deleteItem.model}/> : null}
         <Breadcrumb>
         <BreadcrumbItem>YOU ARE HERE</BreadcrumbItem>
-          <BreadcrumbItem active>Vehiculos</BreadcrumbItem>
+          <BreadcrumbItem active>Alertas</BreadcrumbItem>
         </Breadcrumb>
-        <h1>Vehiculos</h1>
+        <h1>Alertas</h1>
         <Widget
           className="pb-0"
           title={
@@ -190,7 +196,7 @@ class AlertList extends React.Component {
               <div className="pull-right mt-n-xs">
               </div>
               <h5 className="mt-0">
-                 <span className="fw-semi-bold">Vehiculos</span>
+                 <span className="fw-semi-bold">Alertas</span>
               </h5>
             </div>
           }
@@ -213,7 +219,7 @@ class AlertList extends React.Component {
                                   classes='table table-head-custom table-vertical-center overflow-hidden'
                                   bootstrap4
                                   keyField='id'
-                                  data={!this.props.vehicles?.items ? [] : this.props.vehicles?.items}
+                                  data={!this.props.alerts?.items ? [] : this.props.alerts?.items}
                                   columns={this.columns}
                                   onTableChange={this.onTableChange}
                                   remote
@@ -241,8 +247,9 @@ class AlertList extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    isFetching: state.vehicle.isFetching,
-    vehicles: state.vehicle.vehicles,
+    isFetching: state.alert.isFetching,
+    alertList: state.alert.alertList,
+    deleteModalOpened: state.navigation.deleteModalOpened,
   };
 }
 

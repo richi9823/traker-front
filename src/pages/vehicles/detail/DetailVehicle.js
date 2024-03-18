@@ -12,13 +12,8 @@ import {
   ButtonGroup,
   Breadcrumb,
   BreadcrumbItem,
-  Progress,
   Badge,
   ListGroup,
-  ButtonDropdown,
-  DropdownMenu,
-  DropdownToggle,
-  DropdownItem,
   Form,
   FormGroup,
   Label,
@@ -36,9 +31,11 @@ import { getPosition } from '../../../actions/position';
 import moment from 'moment';
 import { Toggle } from '../../../components/Toggle';
 import { getStatus } from '../../../enum/GPSStatus';
-import { deleteGps, updateStatusGps } from '../../../actions/gps';
+import { cleanErrorGpsAction, closeModalGPS, deleteGps, openModalGPS, updateStatusGps } from '../../../actions/gps';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import AddGPSModal from '../../../components/Modals/AddGPSModal';
+import DeleteModal from '../../../components/Modals/DeleteModal';
+import { closeDeleteModal, openDeleteModal } from '../../../actions/navigation';
 
 
 class DetailVehicle extends Component {
@@ -55,11 +52,15 @@ class DetailVehicle extends Component {
     position: PropTypes.object.isRequired,
     alertList: PropTypes.object.isRequired,
     routeList: PropTypes.object.isRequired,
-    notificationList: PropTypes.object.isRequired
+    notificationList: PropTypes.object.isRequired,
+    modalGpsOpened: PropTypes.bool.isRequired,
+    deleteModalOpened: PropTypes.bool.isRequired,
   };
   /* eslint-enable */
 
   static defaultProps = {
+    deleteModalOpened: false,
+    modalGpsOpened:false,
     isFetching: false,
     message: null,
     errorMessage: null,
@@ -76,9 +77,8 @@ class DetailVehicle extends Component {
   state = {
     showSuccess: false,
     online: false,
-    showErrorGPSModal:false,
-    modalGPS:false,
     interval: null,
+    deleteItem: null,
   };
 
   handleChange = (event) => {
@@ -142,25 +142,35 @@ onToggled = (value, id) => {
   });
 }
 
-deleteGps = (id) => {
-  this.props.dispatch(deleteGps(id)).then(() =>{
-    this.props.dispatch(getVehicle(this.props.match.params.id))
+openModalDeleteGPS = (data) => {
+  this.props.dispatch(openDeleteModal())
+  this.setState({deleteItem:data})
+  
+}
+
+doRemoveGPS = () =>{
+  const {deleteItem} = this.state;
+  this.props.dispatch(deleteGps(deleteItem.id)).then(() =>{
+    this.props.dispatch(getVehicle(this.props.match.params.id)).then(()=>{
+      this.props.dispatch(closeDeleteModal())
+    })
   });
 }
 
 openModalGPS=()=>{
-  this.setState({modalGPS:true})
+  this.props.dispatch(openModalGPS())
 }
 
 addGPS=(value)=>{
   this.props.dispatch(addGpsDevice(this.props.match.params.id, value)).then(() =>{
     this.props.dispatch(getVehicle(this.props.match.params.id)).then(()=>{
-      this.setState({showErrorGPSModal: false, modalGPS:false});
+      this.props.dispatch(closeModalGPS())
+      this.props.dispatch(cleanErrorGpsAction())
     }).catch((err) => {
       console.error(err)
     })
   }).catch((err) => {
-    this.setState({showErrorGPSModal:true})
+    console.error(err)
   });
 }
 
@@ -171,11 +181,12 @@ removeTimeout = () =>{
 
 
   render() {
-    const {vehicle, position, notificationList, alertList, routeList} = this.props
-    const {showErrorGPS, showErrorGPSModal, showSuccess, online, modalGPS} = this.state;
+    const {vehicle, position, notificationList, alertList, routeList, modalGpsOpened, deleteModalOpened} = this.props
+    const {showSuccess, online, deleteItem} = this.state;
     return (
       <div className={s.root}>
-        {modalGPS ? <AddGPSModal isFetching={this.props.isFetching} errorMessage={this.props.errorMessage} showErrorGPSModal={showErrorGPSModal} addGPS={this.addGPS} onCancel={()=> this.setState({modalGPS:false})} text={"Nuevo dispositivo"}/> : null}
+        {modalGpsOpened ? <AddGPSModal addGPS={this.addGPS} text={"Nuevo dispositivo"}/> : null}
+        {deleteModalOpened ? <DeleteModal isFetching={this.props.isFetching} onAccept={() => this.doRemoveGPS()} text={deleteItem.id}/> : null}
         <Breadcrumb>
           <BreadcrumbItem>YOU ARE HERE</BreadcrumbItem>
           <BreadcrumbItem>Vehiculos</BreadcrumbItem>
@@ -362,7 +373,7 @@ removeTimeout = () =>{
                     >
                         <a
                           className='btn btn-outline-danger btn-sm mx-1'
-                          onClick={() => this.deleteGps(a.id)}
+                          onClick={() => this.openModalDeleteGPS(a)}
                         >
                   <span
                   className="glyphicon glyphicon-trash"
@@ -403,7 +414,9 @@ function mapStateToProps(state) {
     notificationList: state.notification.notificationList,
     routeList: state.route.routeList,
     alertList: state.alert.alertList,
-    position: state.position.position
+    position: state.position.position,
+    modalGpsOpened: state.gps.modalGpsOpened,
+    deleteModalOpened: state.navigation.deleteModalOpened,
   };
 }
 

@@ -18,6 +18,7 @@ import { getAllVehicles, removeVehicle } from '../../../actions/vehicle';
 import { options } from '../../../constants/pagination';
 import { columnFormatter } from './columnFormatter';
 import DeleteModal from '../../../components/Modals/DeleteModal';
+import { closeDeleteModal, openDeleteModal } from '../../../actions/navigation';
 
 const columns = ({ handleAction }) => [
   {
@@ -60,11 +61,13 @@ class PostList extends React.Component {
     dispatch: PropTypes.func.isRequired,
     isFetching: PropTypes.bool,
     vehicleList: PropTypes.object.isRequired,
+    deleteModalOpened: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
     isFetching: false,
-    vehicleList: {items:[], total:0}
+    vehicleList: {items:[], total:0},
+    deleteModalOpened: false,
   };
 
   static meta = {
@@ -76,7 +79,6 @@ class PostList extends React.Component {
     super(props);
 
     this.state = {
-      showDeleteModal:false,
       selectItem:null,
       queryParams: {
       },
@@ -119,7 +121,8 @@ class PostList extends React.Component {
   handleAction = (type, data) =>{
     switch(type){
       case 'delete':{
-        this.setState({showDeleteModal: true, deleteItem:data})
+        this.props.dispatch(openDeleteModal())
+        this.setState({deleteItem:data})
         break;
       }
       case 'view':{
@@ -164,22 +167,23 @@ class PostList extends React.Component {
         const {vehicleList} = this.props;
         this.setState((prev) => (
           {
-            showDeleteModal:false,
             paginationOptions:{
             ...prev.paginationOptions,
             totalSize: vehicleList.total
           }
           }));
+          this.props.dispatch(closeDeleteModal())
       })
     })
   }
 
   render() {
+    const { deleteModalOpened } = this.props;
     const { items: vehicles } = this.props.vehicleList;
     const { paginationOptions, deleteItem ,showDeleteModal } = this.state;
     return (
       <div className={s.root}>
-        {showDeleteModal ? <DeleteModal isFetching={this.props.isFetching} onAccept={() => this.doRemove()} onCancel={()=> this.setState({deleteItem: null, showDeleteModal:false})} text={deleteItem.model}/> : null}
+        {deleteModalOpened ? <DeleteModal isFetching={this.props.isFetching} onAccept={() => this.doRemove()} text={deleteItem.model}/> : null}
         <Breadcrumb>
         <BreadcrumbItem>YOU ARE HERE</BreadcrumbItem>
           <BreadcrumbItem active>Vehiculos</BreadcrumbItem>
@@ -245,6 +249,7 @@ function mapStateToProps(state) {
   return {
     isFetching: state.vehicle.isFetching,
     vehicleList: state.vehicle.vehicleList,
+    deleteModalOpened: state.navigation.deleteModalOpened,
   };
 }
 

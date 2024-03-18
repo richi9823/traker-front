@@ -1,10 +1,16 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Button, Modal, ModalHeader, ModalBody, Form, Alert, FormGroup, Label, Input, ButtonGroup, ModalFooter } from 'reactstrap';
+import { closeModalGPS } from '../../actions/gps';
 
 class AddGPSModal extends React.Component {
 
+  static defaultProps = {
+    isFetching: false,
+    errorMessage: null,
+  };
+
     state = {
-        showError:false,
         form:{
             name:"",
             device_register_id:""
@@ -32,15 +38,17 @@ class AddGPSModal extends React.Component {
         this.props.addGPS(form);
       }
 
+      onCancel = () =>{
+        this.props.dispatch(closeModalGPS())
+      }
+
     render(){
-        console.log(this.props.showErrorGPSModal)
-        console.log(this.props.errorMessage)
     return (
           <Modal isOpen={true}>
             <ModalHeader>Añadir dispositivo GPS</ModalHeader>
             <ModalBody>
             <Form onSubmit={() => this.clickAddGps()}>
-                {this.props.errorMessage && this.props.showErrorGPSModal && (
+                {this.props.errorMessage && (
                   <Alert className="alert-sm alert-danger" bsstyle="danger">
                     {this.props.errorMessage}
                   </Alert>
@@ -75,7 +83,7 @@ class AddGPSModal extends React.Component {
               <Button color="danger" onClick={() => this.clickAddGps()}>
                 {this.props.isFetching ? 'Añadiendo...' : 'Añadir'}
               </Button>{' '}
-              <Button color="secondary" onClick={this.props.onCancel}>
+              <Button color="secondary" onClick={() => this.onCancel()}>
                 Cancelar
               </Button>
             </ModalFooter>
@@ -84,5 +92,11 @@ class AddGPSModal extends React.Component {
     }
   
 }
+function mapStateToProps(state) {
+  return {
+    isFetching: state.vehicle.isFetching,
+    errorMessage: state.vehicle.errorMessage
+  };
+}
 
-export default AddGPSModal;
+export default connect(mapStateToProps)(AddGPSModal);

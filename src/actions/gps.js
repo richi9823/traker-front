@@ -10,6 +10,9 @@ export const DELETE_GPS_SUCCESS = 'DELETE_GPS_SUCCESS';
 export const GET_ALL_GPS_SUCCESS = 'GET_ALL_GPS_SUCCESS';
 export const CLEAN_ERROR_GPS= 'CLEAN_ERROR_GPS';
 
+export const OPEN_MODAL_GPS= 'OPEN_MODAL_GPS';
+export const CLOSE_MODAL_GPS= 'CLOSE_MODAL_GPS';
+
 const GpsApi = new TrakerApi.GpsDeviceControllerApi();
 
 function requestGpsInit() {
@@ -61,6 +64,18 @@ function requestGpsFailure(message) {
 function cleanErrorGPSAction() {
   return {
     type: CLEAN_ERROR_GPS,
+  };
+}
+
+export function openModalGPS() {
+  return {
+    type: OPEN_MODAL_GPS,
+  };
+}
+
+export function closeModalGPS() {
+  return {
+    type: CLOSE_MODAL_GPS,
   };
 }
 

@@ -1,0 +1,11 @@
+# Generic
+*.md
+.cache
+.git
+.gitignore
+Dockerfile
+
+# Node
+node_modules
+npm-debug.log
+.npmrc
