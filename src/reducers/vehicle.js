@@ -38,6 +38,7 @@ export default function vehicle(
     case CREATE_VEHICLE_SUCCESS:
     case EDIT_VEHICLE_SUCCESS:
     case GET_VEHICLE_SUCCESS:
+    case SET_IMAGE_SUCCESS:
       return Object.assign({}, state, {
         isFetching: action.isFetching,
         message: action.message,
@@ -58,11 +59,17 @@ export default function vehicle(
     });     
     case DELETE_VEHICLE_SUCCESS:
     case ADD_GPS_SUCCESS:
-    case DELETE_IMAGE_SUCCESS:
-    case SET_IMAGE_SUCCESS:
       return Object.assign({}, state, {
         isFetching: action.isFetching,
         message: action.message,
+      });
+    case DELETE_IMAGE_SUCCESS:  
+      return Object.assign({}, state, {
+        isFetching: action.isFetching,
+        vehicle: {
+          ...state.vehicle,
+          image: null,
+        }
       });
     case CLEAN_ERROR_VEHICLE:
       return Object.assign({}, state, {

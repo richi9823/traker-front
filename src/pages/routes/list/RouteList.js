@@ -42,7 +42,7 @@ const columns = ({ handleAction }) => [
     dataField: 'total_distance',
     text: 'Distancia total',
     sort: true,
-    formatter: (distance) => distance != null ? distance.toFixed(2) + "Km" : "-"
+    formatter: (distance) => distance != null ? (distance/1000).toFixed(2) + "Km" : "-"
   },
   {
     dataField: 'action',

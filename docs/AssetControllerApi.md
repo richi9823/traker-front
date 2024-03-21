@@ -4,7 +4,7 @@ All URIs are relative to *http://localhost:8080*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getAsset**](AssetControllerApi.md#getAsset) | **GET** /api/asset/{assetId} | 
+[**getAsset**](AssetControllerApi.md#getAsset) | **GET** /asset/{assetId} | 
 
 
 
@@ -18,10 +18,6 @@ Method | HTTP request | Description
 
 ```javascript
 import TrakerApi from 'traker_api';
-let defaultClient = TrakerApi.ApiClient.instance;
-// Configure Bearer (JWT) access token for authorization: Bearer Authentication
-let Bearer Authentication = defaultClient.authentications['Bearer Authentication'];
-Bearer Authentication.accessToken = "YOUR ACCESS TOKEN"
 
 let apiInstance = new TrakerApi.AssetControllerApi();
 let assetId = "assetId_example"; // String | 
@@ -46,7 +42,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[Bearer Authentication](../README.md#Bearer Authentication)
+No authorization required
 
 ### HTTP request headers
 

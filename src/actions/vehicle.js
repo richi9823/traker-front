@@ -91,10 +91,11 @@ function requestAddGps() {
 }
 
 
-function requestSetImage() {
+function requestSetImage(vehicle) {
   return {
     type: SET_IMAGE_SUCCESS,
     isFetching: false,
+    vehicle,
   };
 }
 
@@ -124,6 +125,29 @@ export function addGpsDevice(vehicleId, gps) {
       .then(() => {
         // Dispatch the success action
         dispatch(requestAddGps());
+        return Promise.resolve();
+      })
+      .catch(err => {
+        if(err.status === 401){
+          dispatch(logoutUser())
+        }else{
+          dispatch(requestVehicleFailure(err?.body?.message))
+          console.error('Error: ', err)
+        }
+        return Promise.reject(err)
+      });
+  };
+}
+
+export function addImage(vehicleId, image) {
+
+  return dispatch => {
+
+    dispatch(requestVehicleInit());
+    return VehicleApi.setImage(vehicleId, image)
+      .then((response) => {
+        // Dispatch the success action
+        dispatch(requestSetImage(response));
         return Promise.resolve();
       })
       .catch(err => {

@@ -132,7 +132,7 @@ openDeleteModal = () =>{
               <Input
                     id="input-title"
                     type="text"
-                    value={moment(route.finish).format("DD-MM-YYYY HH:mm")}
+                    value={route.finish ? moment(route.finish).format("DD-MM-YYYY HH:mm") : "-"}
                     disabled
                   />
               </FormGroup>
@@ -141,7 +141,7 @@ openDeleteModal = () =>{
               <Input
                     id="input-title"
                     type="text"
-                    value={(route.total_distance != null ? route?.total_distance.toFixed(2) : '-') + "Km"}
+                    value={(route.total_distance != null ? (route?.total_distance/1000).toFixed(2) : '-') + "Km"}
                     disabled
                   />
               </FormGroup>
@@ -150,7 +150,7 @@ openDeleteModal = () =>{
               <Input
                     id="input-title"
                     type="text"
-                    value={route.gps?.name}
+                    value={route.gps?.name + " - " + route.gps?.register_device_id}
                     disabled
                   />
               </FormGroup>

@@ -22,7 +22,7 @@ import {
 } from 'reactstrap';
 import s from './DetailVehicle.module.scss';
 import Widget from '../../../components/Widget/Widget';
-import { addGpsDevice, cleanErrorVehicle, editVehicle, editVehicleRecord, getVehicle } from '../../../actions/vehicle';
+import { addGpsDevice, addImage, cleanErrorVehicle, editVehicle, editVehicleRecord, getVehicle } from '../../../actions/vehicle';
 import Maps from '../../google/Google';
 import { getAllAlerts } from '../../../actions/alert';
 import { getAllNotifications } from '../../../actions/notification';
@@ -32,10 +32,12 @@ import moment from 'moment';
 import { Toggle } from '../../../components/Toggle';
 import { getStatus } from '../../../enum/GPSStatus';
 import { cleanErrorGpsAction, closeModalGPS, deleteGps, openModalGPS, updateStatusGps } from '../../../actions/gps';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import AddGPSModal from '../../../components/Modals/AddGPSModal';
 import DeleteModal from '../../../components/Modals/DeleteModal';
 import { closeDeleteModal, openDeleteModal } from '../../../actions/navigation';
+import pic from '../../../images/Pictures1.svg';
+import { getFileURL } from '../../../util';
 
 
 class DetailVehicle extends Component {
@@ -75,6 +77,8 @@ class DetailVehicle extends Component {
   };
 
   state = {
+    file: null,
+    image: null,
     showSuccess: false,
     online: false,
     interval: null,
@@ -93,6 +97,19 @@ class DetailVehicle extends Component {
 
   editVehicle = (e) => {
     const { vehicle } = this.props
+    const { file } = this.state;
+    if(file){
+      this.props.dispatch(addImage(this.props.match.params.id, file)).then(() =>{
+        this.methodEdit(vehicle)
+      })
+    } else{
+      this.methodEdit(vehicle)
+
+    } 
+    e.preventDefault();
+  }
+
+  methodEdit = (vehicle) =>{
     this.props
       .dispatch(
         editVehicle(this.props.match.params.id, vehicle),
@@ -106,7 +123,6 @@ class DetailVehicle extends Component {
       ).catch(() =>{
         this.setState({showSuccess:false})
       })
-    e.preventDefault();
   }
 
   componentDidMount() {
@@ -179,10 +195,20 @@ removeTimeout = () =>{
   clearInterval(interval)
 }
 
+handleAvatarChange = (event) => {
+  const { target } = event;
+  if (target.files.length) {
+    this.setState((prevState) => ({
+      image: URL.createObjectURL(target.files[0]),
+      file: target.files[0],
+    }));
+  }
+};
+
 
   render() {
     const {vehicle, position, notificationList, alertList, routeList, modalGpsOpened, deleteModalOpened} = this.props
-    const {showSuccess, online, deleteItem} = this.state;
+    const {showSuccess, online, deleteItem, image} = this.state;
     return (
       <div className={s.root}>
         {modalGpsOpened ? <AddGPSModal addGPS={this.addGPS} text={"Nuevo dispositivo"}/> : null}
@@ -218,7 +244,7 @@ removeTimeout = () =>{
           </Col>
           <Col md={4}>
           <Col sm={12} md={12}>
-          <Widget
+            <Widget
               title={
                 <span>
                   <span className="fw-semi-bold">Formulario</span>
@@ -232,6 +258,26 @@ removeTimeout = () =>{
                     {this.props.message}
                   </Alert>
               )}
+                <FormGroup className={s.divImage}>
+                
+                   {(vehicle.image || image) ? (
+                     <Image 
+                       src={image ? getFileURL(image) : getFileURL(vehicle.image)}
+                       alt='IMG'
+                     />
+                   ):(<Image 
+                    src={pic}
+                    className='image-step-wrapper max-h-120px max-w-150px'
+                    alt='IMG'
+                  />)}
+                     <Input
+                       type='file'
+                       name='image'
+                       accept='.png, .jpg, .jpeg, .svg'
+                       onChange={this.handleAvatarChange}
+                     />
+
+                </FormGroup>
                 <FormGroup>
                   <Label for="input-title">Modelo</Label>
                   <Input
@@ -278,54 +324,10 @@ removeTimeout = () =>{
               </Form>
             </Widget>
           </Col>
-          <Col sm={12} md={12}>
-            <ListGroup>
-              <Link onClick={()=> this.removeTimeout()} to={"/app/vehicles/" + vehicle.id + "/routes"} className="list-group-item">
-                <i className="fa fa-phone mr-xs text-secondary" />{' '}
-                Trayectorias <Badge className="ml-xs" color="danger">{routeList.total}</Badge>
-              </Link>
-              <Link to="/app" className="list-group-item">
-                <i className="fa fa-bell-o mr-xs text-secondary" />{' '}
-                Notificaciones <Badge className="ml-xs" color="warning">{notificationList.total}</Badge>
-              </Link>
-              <Link to="/app" className="list-group-item">
-                <i className="fa fa-comment-o mr-xs text-secondary" />{' '}
-                Alertas <Badge className="ml-xs" color="success">{alertList.total}</Badge>
-              </Link>
-            </ListGroup>
-          </Col>
           </Col>
         </Row>
         <Row>
-        <Col sm={5}>
-        <Widget
-              title={
-                <h5 className="mt-0 mb-2">
-                    Detalles del vehiculo
-                  </h5>
-              }
-            >
-              <FormGroup>
-              <Label className="mr-2">Estado:</Label>
-                <span>
-                    <span className="fw-semi-bold"> {online ? 'online' : 'offline'}</span>
-                </span>
-              </FormGroup>
-              <FormGroup>
-              <Label className="mr-2">Distancia total:</Label>
-                <span>
-                    <span className="fw-semi-bold">{ (vehicle.total_distance/100).toFixed(2)} Km</span>
-                </span>
-              </FormGroup>
-              <FormGroup>
-              <Label className="mr-2">Fecha registro:</Label>
-                <span>
-                    <span className="fw-semi-bold">{ moment(vehicle.created_date).format("DD-MM-YYYY")}</span>
-                </span>
-              </FormGroup>
-            </Widget>
-        </Col>
-        <Col sm={7}>
+        <Col sm={8}>
         <Widget
               title={
                 <div>
@@ -383,12 +385,12 @@ removeTimeout = () =>{
                   </td>
                 </tr>
                 ))}
-                {this.props.isFetchingAlerts && (
+                {this.props.isFetching && (
                   <tr>
                     <td colSpan="100">Cargando...</td>
                   </tr>
                 )}
-                {alertList?.total === 0 && !this.props.isFetchingAlerts && 
+                {vehicle?.gps?.length === 0 && !this.props.isFetching && 
                   <tr>
                     <td colSpan="100">No hay registros...</td>
                   </tr> 
@@ -396,7 +398,61 @@ removeTimeout = () =>{
                 </tbody>
               </Table>
             </Widget>
+        <Widget
+              title={
+                <h5 className="mt-0 mb-2">
+                    Detalles del vehiculo
+                  </h5>
+              }
+            >
+              <FormGroup>
+              <Label className="mr-2">Estado:</Label>
+                <Input
+                    id="input-title"
+                    type="text"
+                    disabled
+                    value={online ? 'online' : 'offline'}
+                  />
+              </FormGroup>
+              <FormGroup>
+              <Label className="mr-2">Distancia total:</Label>
+                <Input
+                    id="input-title"
+                    type="text"
+                    value={ (vehicle.total_distance/1000).toFixed(2) + "Km"}
+                    disabled
+                  />
+              </FormGroup>
+              <FormGroup>
+              <Label className="mr-2">Fecha registro:</Label>
+                <Input
+                    id="input-title"
+                    type="text"
+                    value={ moment(vehicle.created_date).format("DD-MM-YYYY")}
+                    disabled
+                  />
+              </FormGroup>
+            </Widget>
+        </Col>
+        <Col sm={4} md={4}>
+          <Widget>
+            <ListGroup>
+              <Link onClick={()=> this.removeTimeout()} to={"/app/vehicles/" + vehicle.id + "/routes"} className="list-group-item">
+                <i className="fa fa-phone mr-xs text-secondary" />{' '}
+                Trayectorias <Badge className="ml-xs" color="danger">{routeList.total}</Badge>
+              </Link>
+              <Link to="/app" className="list-group-item">
+                <i className="fa fa-bell-o mr-xs text-secondary" />{' '}
+                Notificaciones <Badge className="ml-xs" color="warning">{notificationList.total}</Badge>
+              </Link>
+              <Link to="/app" className="list-group-item">
+                <i className="fa fa-comment-o mr-xs text-secondary" />{' '}
+                Alertas <Badge className="ml-xs" color="success">{alertList.total}</Badge>
+              </Link>
+            </ListGroup>
+            </Widget>
           </Col>
+          
         </Row>
       </div>
     );

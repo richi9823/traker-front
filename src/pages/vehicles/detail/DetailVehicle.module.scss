@@ -27,3 +27,10 @@
     height: 400px;
     overflow:scroll;
  }
+ .divImage{
+    display: flex;
+    flex-direction: column;
+    img{
+      max-height: 200px
+    }
+ }
