@@ -261,21 +261,31 @@ handleAvatarChange = (event) => {
                 <FormGroup className={s.divImage}>
                 
                    {(vehicle.image || image) ? (
-                     <Image 
+                     <img 
                        src={image ? getFileURL(image) : getFileURL(vehicle.image)}
                        alt='IMG'
                      />
-                   ):(<Image 
+                   ):(<img 
                     src={pic}
-                    className='image-step-wrapper max-h-120px max-w-150px'
                     alt='IMG'
                   />)}
-                     <Input
+                  <div>
+                  <label
+                        className='btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow'
+                        data-action='change'
+                        data-toggle='tooltip'
+                        title=''
+                        data-original-title='Change'
+                      >
+                        <i className='fa fa-pencil-square-o' />
+                     <input
                        type='file'
                        name='image'
                        accept='.png, .jpg, .jpeg, .svg'
                        onChange={this.handleAvatarChange}
                      />
+                     </label>
+                  </div>
 
                 </FormGroup>
                 <FormGroup>
