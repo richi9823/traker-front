@@ -8,6 +8,7 @@ import {composeWithDevTools} from 'redux-devtools-extension'
 import App from './components/App';
 import config from './config';
 import reducers from './reducers';
+import * as serviceWorker from './serviceWorker';
 
 axios.defaults.baseURL = config.baseURLApi;
 axios.defaults.headers.common['Content-Type'] = "application/json";
@@ -28,3 +29,5 @@ ReactDOM.render(
     </Provider>,
     document.getElementById('root')
 );
+
+serviceWorker.unregister();

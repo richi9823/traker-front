@@ -99,6 +99,7 @@
     "sass-loader": "7.2.0",
     "semver": "6.3.0",
     "sequelize": "^5.22.3",
+    "serve": "^14.2.1",
     "sqlite3": "^4.1.0",
     "style-loader": "1.0.0",
     "terser-webpack-plugin": "1.4.1",
@@ -112,7 +113,7 @@
   },
   "scripts": {
     "start": "node scripts/start.js",
-    "build": "cross-env PUBLIC_URL='/react-dashboard' node scripts/build.js",
+    "build": "cross-env node scripts/build.js",
     "test": "node scripts/test.js",
     "server": "node server/start.js",
     "dev": "cross-env NODE_ENV=development run-p server start"
