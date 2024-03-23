@@ -4,7 +4,7 @@ All URIs are relative to *http://localhost:8080*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getAsset**](AssetControllerApi.md#getAsset) | **GET** /asset/{assetId} | 
+[**getAsset**](AssetControllerApi.md#getAsset) | **GET** /api/asset/{assetId} | 
 
 
 
