@@ -43,7 +43,8 @@ const imageInlineSizeLimit = parseInt(
 
 // Check if TypeScript is setup
 const useTypeScript = fs.existsSync(paths.appTsConfig);
-
+const cert = fs.readFileSync(path.join(__dirname, 'certificate.crt'), 'utf8');
+const key = fs.readFileSync(path.join(__dirname, 'privatekey.key'), 'utf8');
 // style files regexes
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
@@ -99,7 +100,10 @@ module.exports = function(webpackEnv) {
         loader: require.resolve('postcss-loader'),
         options: {
           // Necessary for external CSS imports to work
-          // https://github.com/facebook/create-react-app/issues/2677
+          https:{
+            key: key,
+            cert: cert,
+          },
           ident: 'postcss',
           plugins: () => [
             require('postcss-flexbugs-fixes'),
