@@ -7,8 +7,6 @@ COPY package.json ./
 COPY package-lock.json ./
 COPY packages ./packages
 RUN npm install
-COPY . ./
-RUN npm run-script build
 # add app
-
-CMD ["npx", "serve", "-s", "build"]
+COPY . ./
+CMD ["npm", "start"]
