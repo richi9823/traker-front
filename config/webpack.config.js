@@ -45,6 +45,7 @@ const imageInlineSizeLimit = parseInt(
 const useTypeScript = fs.existsSync(paths.appTsConfig);
 const cert = fs.readFileSync(path.join(__dirname, 'traker_front.crt'), 'utf8');
 const key = fs.readFileSync(path.join(__dirname, 'traker_front.key'), 'utf8');
+const ca = fs.readFileSync(path.join(__dirname, 'rootCA.crt'), 'utf8');
 // style files regexes
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
@@ -103,6 +104,7 @@ module.exports = function(webpackEnv) {
           https:{
             key: key,
             cert: cert,
+            ca: ca,
           },
           ident: 'postcss',
           plugins: () => [

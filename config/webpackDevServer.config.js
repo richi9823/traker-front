@@ -13,6 +13,7 @@ const host = process.env.HOST || '0.0.0.0';
 module.exports = function(proxy, allowedHost) {
   const cert = fs.readFileSync(path.join(__dirname, 'traker_front.crt'), 'utf8');
 const key = fs.readFileSync(path.join(__dirname, 'traker_front.key'), 'utf8');
+const ca = fs.readFileSync(path.join(__dirname, 'rootCA.crt'), 'utf8');
   return {
     // WebpackDevServer 2.4.3 introduced a security fix that prevents remote
     // websites from potentially accessing local content through DNS rebinding:
@@ -77,6 +78,7 @@ const key = fs.readFileSync(path.join(__dirname, 'traker_front.key'), 'utf8');
     https:{
       key: key,
       cert: cert,
+      ca: ca,
     },
     host,
     overlay: false,
