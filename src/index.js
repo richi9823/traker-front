@@ -9,6 +9,7 @@ import App from './components/App';
 import config from './config';
 import reducers from './reducers';
 import * as serviceWorker from './serviceWorker';
+import { requestForToken } from './firebaseNotification/firebase';
 
 axios.defaults.baseURL = config.baseURLApi;
 axios.defaults.headers.common['Content-Type'] = "application/json";
@@ -30,4 +31,4 @@ ReactDOM.render(
     document.getElementById('root')
 );
 
-serviceWorker.unregister();
+serviceWorker.register();

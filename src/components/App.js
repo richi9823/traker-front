@@ -12,6 +12,7 @@ import LayoutComponent from '../components/Layout';
 import Login from '../pages/login';
 import Register from '../pages/register';
 import { getSession, logoutUser } from '../actions/auth';
+import Notification from '../firebaseNotification/notification';
 
 const PrivateRoute = ({dispatch, component, ...rest }) => {
     if (!Login.isAuthenticated(localStorage.getItem('id_token'))) {
@@ -41,6 +42,7 @@ class App extends React.PureComponent {
     
     return (
         <div>
+            <Notification/>
             <ToastContainer
                 autoClose={5000}
                 hideProgressBar
