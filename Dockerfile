@@ -7,6 +7,8 @@ COPY package.json ./
 COPY package-lock.json ./
 COPY packages ./packages
 RUN npm install
-# add app
 COPY . ./
-CMD ["npm", "start"]
+RUN npm run-script build
+# add app
+
+CMD npx serve -s build --listen 443 --ssl-cert "./config/traker.crt" --ssl-key "./config/traker.key"
