@@ -43,8 +43,8 @@ const imageInlineSizeLimit = parseInt(
 
 // Check if TypeScript is setup
 const useTypeScript = fs.existsSync(paths.appTsConfig);
-const cert = fs.readFileSync(path.join(__dirname, 'traker_front.crt'), 'utf8');
-const key = fs.readFileSync(path.join(__dirname, 'traker_front.key'), 'utf8');
+const cert = fs.readFileSync(path.join(__dirname, 'traker.crt'), 'utf8');
+const key = fs.readFileSync(path.join(__dirname, 'traker.key'), 'utf8');
 const ca = fs.readFileSync(path.join(__dirname, 'rootCA.crt'), 'utf8');
 // style files regexes
 const cssRegex = /\.css$/;

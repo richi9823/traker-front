@@ -11,8 +11,8 @@ const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
 const host = process.env.HOST || '0.0.0.0';
 
 module.exports = function(proxy, allowedHost) {
-  const cert = fs.readFileSync(path.join(__dirname, 'traker_front.crt'), 'utf8');
-const key = fs.readFileSync(path.join(__dirname, 'traker_front.key'), 'utf8');
+  const cert = fs.readFileSync(path.join(__dirname, 'traker.crt'), 'utf8');
+const key = fs.readFileSync(path.join(__dirname, 'traker.key'), 'utf8');
 const ca = fs.readFileSync(path.join(__dirname, 'rootCA.crt'), 'utf8');
   return {
     // WebpackDevServer 2.4.3 introduced a security fix that prevents remote

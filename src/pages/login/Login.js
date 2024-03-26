@@ -50,8 +50,8 @@ class Login extends React.Component {
     super(props);
 
     this.state = {
-      login_nickname: 'richi2398',
-      login_password: '1998Pamos',
+      login_nickname: "",
+      login_password: "",
       firstname:"",
       lastname:"",
       nickname:"",
