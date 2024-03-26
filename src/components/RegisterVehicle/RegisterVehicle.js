@@ -44,7 +44,7 @@ class RegisterVehicle extends React.Component {
     this.state = {
       model: '',
       license: '',
-      device_register_id: '',
+      register_device_id: '',
       showError:false,
       showSuccess: false
     };
@@ -59,7 +59,7 @@ class RegisterVehicle extends React.Component {
   }
 
   changeDeviceRegisterId = (event) => {
-    this.setState({device_register_id: event.target.value});
+    this.setState({register_device_id: event.target.value});
   }
 
   doCreateVehicle = (e) => {
@@ -69,8 +69,8 @@ class RegisterVehicle extends React.Component {
         createVehicle({
           model: this.state.model,
           license: this.state.license,
-          device_register_dto: this.state.device_register_id.length > 0 ? {
-            device_register_id: this.state.device_register_id
+          gps: this.state.register_device_id.length > 0 ? {
+            register_device_id: this.state.register_device_id
           } : null
         }),
       )
@@ -79,7 +79,7 @@ class RegisterVehicle extends React.Component {
         this.setState({
           model: '',
           license: '',
-          device_register_id: '',
+          register_device_id: '',
           showError: false,
           showSuccess: true,
         });
