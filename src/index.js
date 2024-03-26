@@ -6,12 +6,11 @@ import ReduxThunk from 'redux-thunk'
 import axios from 'axios';
 import {composeWithDevTools} from 'redux-devtools-extension'
 import App from './components/App';
-import config from './config';
 import reducers from './reducers';
 import * as serviceWorker from './serviceWorker';
-import { requestForToken } from './firebaseNotification/firebase';
+import { API_BASE_URL } from './constants/apiConf';
 
-axios.defaults.baseURL = config.baseURLApi;
+axios.defaults.baseURL = API_BASE_URL;
 axios.defaults.headers.common['Content-Type'] = "application/json";
 const token = localStorage.getItem('token');
 if (token) {

@@ -15,7 +15,6 @@ import s from './Login.module.scss';
 import Widget from '../../components/Widget';
 import { loginUser, signup, signupFailurePassword } from '../../actions/auth';
 import jwt from 'jsonwebtoken';
-import config from '../../config'
 import { TrakerApi } from '../../constants/apiConf';
 
 class Login extends React.Component {
@@ -38,7 +37,6 @@ class Login extends React.Component {
 
   static isAuthenticated(token) {
     // We check if app runs with backend mode
-    if (!config.isBackend && token) return true;
     if (!token) return;
     const date = new Date().getTime() / 1000;
     const data = jwt.decode(token.replace("Bearer ", ""));
