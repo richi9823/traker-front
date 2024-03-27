@@ -69,7 +69,7 @@ class RegisterVehicle extends React.Component {
         createVehicle({
           model: this.state.model,
           license: this.state.license,
-          deviceRequestDto: this.state.device_register_id.length > 0 ? {
+          device_request_dto: this.state.device_register_id.length > 0 ? {
             device_register_id: this.state.device_register_id
           } : null
         }),
