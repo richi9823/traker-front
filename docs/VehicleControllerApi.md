@@ -1,6 +1,6 @@
 # TrakerApi.VehicleControllerApi
 
-All URIs are relative to *http://localhost:8080*
+All URIs are relative to *https://200.234.235.51:8080*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
